@@ -11,12 +11,16 @@ import frc.robot.subsystems.DriveSubsystem;
 import java.util.List;
 
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 
 import java.sql.SQLOutput;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -93,7 +97,7 @@ public class RobotContainer {
                     m_driverController.getLeftY(),
                     m_driverController.getLeftX(),
                     m_driverController.getRightX(),
-                    false),
+                    true),
                 m_robotDrive));
         
       
@@ -236,6 +240,8 @@ public class RobotContainer {
         SmartDashboard.putData("Scoring: ", m_firstPhaseChooser);
         SmartDashboard.putData("Moving: ", m_secondPhaseChooser);
         
+        
+        
     }
 
     /**
@@ -257,22 +263,33 @@ public class RobotContainer {
 
       //  m_robotDrive.resetOdometry(AutoTrajectoryConstants.kLeftTurnTrajectory.getInitialPose());
 
+        Trajectory kDriveAcrossOuterLine = 
+            TrajectoryGenerator.generateTrajectory(
+                // Start at the origin facing the +X direction
+                new Pose2d(0, 0, new Rotation2d(0)),
+                // Pass through these interior waypoints, helping to ensure a straight path
+                List.of(new Translation2d(1, 0)),
+                // End 1 meters straight ahead of where we started, facing forward
+                new Pose2d(2, 0, new Rotation2d(0)),
+                AutoTrajectoryConstants.kAutoTrajectoryConfigBackward);
+
         SequentialCommandGroup finalAutoCommand = new SequentialCommandGroup();
 
-        Command phaseOne = m_firstPhaseChooser.getSelected();
+        Command phaseOne = m_driveAcrossOuterLine;
         if (phaseOne != null){
-           // finalAutoCommand.addCommands(phaseOne);
+            finalAutoCommand.addCommands(phaseOne);
         }
         
-        Command placeHolderCommand = new WaitCommand(1.0);
+    /*  Command placeHolderCommand = new WaitCommand(1.0);
        //   finalAutoCommand.addCommands(placeHolderCommand);
 
         Command phaseTwo = m_secondPhaseChooser.getSelected();
         if (phaseTwo != null) {
            // finalAutoCommand.addCommands(phaseTwo);
-        }
+        }*/
 
-        finalAutoCommand.addCommands(m_doNothingCommand, placeHolderCommand, phaseTwo);
+        m_robotDrive.resetOdometry(kDriveAcrossOuterLine.getInitialPose());
+      //  finalAutoCommand.addCommands(m_doNothingCommand);
         return finalAutoCommand;
     }
 

@@ -77,10 +77,10 @@ public final class AutoConstants {
                 // Start at the origin facing the +X direction
                 new Pose2d(0, 0, new Rotation2d(0)),
                 // Pass through these interior waypoints, helping to ensure a straight path
-                List.of(new Translation2d(10, 0), new Translation2d(20, 0), new Translation2d(30, 0), new Translation2d(40, 0), new Translation2d(50, 0)),
+                List.of(new Translation2d(1, 0)),
                 // End 1 meters straight ahead of where we started, facing forward
-                new Pose2d(60, 0, new Rotation2d(0)),
-                kAutoTrajectoryConfigBackward);
+                new Pose2d(2, 0, new Rotation2d(0)),
+                kAutoTrajectoryConfigForward);
 
         public static final Trajectory kChargeStationTrajectory =
             TrajectoryGenerator.generateTrajectory(

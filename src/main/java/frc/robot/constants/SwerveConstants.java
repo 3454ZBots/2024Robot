@@ -69,7 +69,7 @@ public final class SwerveConstants
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
         public static final double kMaxSpeedMetersPerSecond = 90; //Used to be 40
-        public static final double kMaxAngularSpeed = 18 * Math.PI; //Used to be 12 * PI
+        public static final double kMaxAngularSpeed = 36 * Math.PI; //Used to be 12 * PI
 
         // Chassis configuration
         public static final double kTrackWidth = Units.inchesToMeters(26.6);
@@ -100,6 +100,7 @@ public final class SwerveConstants
         public static final double kBackRightChassisAngularOffset = (5* Math.PI) / 4;
     
         public static final boolean kGyroReversed = false;
+        public static final int PIGEON_ID = 10;
     }
 
     /* Constants relevant to the NEO motors specifically */

@@ -82,6 +82,8 @@ public class Rabid extends TimedRobot
 
 	boolean orienting;
 
+	double steering_speed;
+
 
 /* 
 	CANifier CanLed;
@@ -234,7 +236,7 @@ public class Rabid extends TimedRobot
 		
 		time += 0.02; 
 	}
-/*
+/* 
 	public void controlRabidMechanisms()
 	{
 		aButton = false;
@@ -474,6 +476,7 @@ public class Rabid extends TimedRobot
 			if(aButton)
 			{
 				orienting = true;
+				steering_speed = 0.2;
 			}
 			
 			if(bButton)
@@ -483,6 +486,7 @@ public class Rabid extends TimedRobot
 
 			if(orienting)
 			{
+				/*
 				if(Math.abs(distance_adjust) > 0.01)
 				{
 					if (distance_adjust > 0)
@@ -494,7 +498,9 @@ public class Rabid extends TimedRobot
 						moveInputNum = -0.2;
 					}
 				}
+				*/
 
+				/* 
 				if (tX > 1.0) {
 					steering_adjust = -0.2f;
 					//steering_adjust = kpAim * heading_error - min_aim_command;
@@ -506,9 +512,27 @@ public class Rabid extends TimedRobot
 				if (Math.abs(distance_adjust) <= 0.01 || (tX <= 1.0 && tX >= -1.0)){
 					orienting = false;
 				}
+*/
+				if(Math.abs(limeYaw) > 0.1)
+				{
+					if(limeYaw < 0)
+					{
+						drive.mechnumRobot(0, steering_speed * -1, 0, false);
+					}
+					else if(limeYaw > 0)
+					{
+						drive.mechnumRobot(0, steering_speed, 0, false);
+					}
+
+					
+				}
+				else
+				{
+					orienting = false;
+				}
 
 				SmartDashboard.putNumber("Steering Adjust", steering_adjust);
-				drive.mechnumRobot(moveInputNum, steering_adjust, 0, false);
+				//drive.mechnumRobot(moveInputNum, steering_adjust, 0, false);
 				
 				/*
 				if(limeRx <= 5 && limeRx >= -5)

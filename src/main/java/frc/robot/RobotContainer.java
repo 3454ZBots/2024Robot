@@ -8,6 +8,8 @@ import frc.robot.constants.BasicConstants.SmartDashboardConstants;
 import frc.robot.constants.SwerveConstants.SwerveDriveConstants;
 
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
+
 import java.util.List;
 
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -38,7 +40,7 @@ import frc.robot.constants.BasicConstants.Misc;
 public class RobotContainer {
 
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-
+    private final VisionSubsystem m_robotVision = new VisionSubsystem(m_robotDrive);
 
     // The driver's controller
     CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVE_REMOTE_PORT);
@@ -97,8 +99,10 @@ public class RobotContainer {
                     m_driverController.getLeftY(),
                     m_driverController.getLeftX(),
                     m_driverController.getRightX(),
-                    true),
+                    false),
                 m_robotDrive));
+        
+        m_robotVision.setDefaultCommand(new RunCommand(() -> m_robotVision.visionPeriodic(), m_robotVision));
         
       
        
@@ -114,8 +118,8 @@ public class RobotContainer {
         
   
 
-        
-
+        m_driverController.x().onTrue(Commands.runOnce(() -> m_robotVision.beginOrienting()));
+        m_driverController.a().onTrue(Commands.runOnce(() -> m_robotVision.stopOrienting()));
         m_driverController.y().onTrue(Commands.runOnce(() -> m_robotDrive.setX()));
     }
 

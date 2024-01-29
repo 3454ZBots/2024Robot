@@ -1,43 +1,54 @@
 package frc.robot.subsystems;
 // lime light 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import javax.lang.model.util.ElementScanner14;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.subsystems.DriveSubsystem;;
 
-public class VisionSubsystem {
+public class VisionSubsystem extends SubsystemBase {
 
     NetworkTable table; 
+    NetworkTableEntry tx, ty, ta, targetpose;
+    double tX, tY, limeArea, limeX, limeY, limeZ, limeRoll, limePitch, limeYaw;
+    boolean isorienting;
+    DriveSubsystem robotdrive;
 
-    public VisionSubsystem() {
+    public VisionSubsystem(DriveSubsystem drivesystem) {
 	    table = NetworkTableInstance.getDefault().getTable("limelight-unique");
 	    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
 	    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+        robotdrive = drivesystem;
     }
 
-    public void getData() {
+
+    public void visionPeriodic() {
         //reference documentation: https://docs.limelightvision.io/en/latest/getting_started.html#basic-programming
 
-		NetworkTableEntry tx = table.getEntry("tx");
-        NetworkTableEntry ty = table.getEntry("ty");
-        NetworkTableEntry ta = table.getEntry("ta");
+		tx = table.getEntry("tx");
+        ty = table.getEntry("ty");
+        ta = table.getEntry("ta");
 
         //X Y Z in meters, Roll Pitch Yaw in degrees
-        NetworkTableEntry targetpose = table.getEntry("targetpose_cameraspace");
+        targetpose = table.getEntry("targetpose_cameraspace");
 
         //read values periodically
-        double tX = tx.getDouble(0.0);
-        double tY = ty.getDouble(0.0);
+        tX = tx.getDouble(0.0);
+        tY = ty.getDouble(0.0);
 
         //tag area as percentage of image
-        double limeArea = ta.getDouble(0.0);
+        limeArea = ta.getDouble(0.0);
 
-        double limeZ = targetpose.getDoubleArray(new double[6])[2];
-        double limeX = targetpose.getDoubleArray(new double[6])[0];
-        double limeY = targetpose.getDoubleArray(new double[6])[1];
-        double limeRoll = targetpose.getDoubleArray(new double[6])[3];
-        double limePitch = targetpose.getDoubleArray(new double[6])[4];
-        double limeYaw = targetpose.getDoubleArray(new double[6])[5];
+        limeZ = targetpose.getDoubleArray(new double[6])[2];
+        limeX = targetpose.getDoubleArray(new double[6])[0];
+        limeY = targetpose.getDoubleArray(new double[6])[1];
+        limeRoll = targetpose.getDoubleArray(new double[6])[3];
+        limePitch = targetpose.getDoubleArray(new double[6])[4];
+        limeYaw = targetpose.getDoubleArray(new double[6])[5];
 
         //post to smart dashboard periodically
         SmartDashboard.putNumber("tx", tX);
@@ -51,6 +62,15 @@ public class VisionSubsystem {
         SmartDashboard.putNumber("LimelightYaw", limeYaw);
         SmartDashboard.putNumber("distance", estimateDistance());
 
+        if(isorienting)
+        {
+            orient();
+        }
+        
+
+
+        //Old Correction Code
+        /*
         // limelight distance variables  
         float kpDistance = -0.1f; // proportional control constant for distance
         float current_distance = (float) estimateDistance();
@@ -71,7 +91,111 @@ public class VisionSubsystem {
         } else if (tX < -1.0) {
             steering_adjust = kpAim * heading_error + min_aim_command;
         }
+        */
     }
+
+
+     public void orient()
+    {
+        double goalPose = 1;
+        double goalDist = 2;
+        double offset = 0;
+        if(Math.abs(limeYaw)- goalPose > 0.1) 
+        {
+            if(limeYaw > goalPose)
+            {
+                robotdrive.drive(0, 0, -0.1, false);
+            }
+            else if(limeYaw < goalPose)
+            {
+                robotdrive.drive(0, 0, 0.1, false);
+            }
+        }
+        else if(Math.abs(limeX) > 0.1 || Math.abs(limeY) - goalDist > 0.1)
+        {
+            if(limeX > offset)
+            {
+                robotdrive.drive(-0.1, 0, 0, false);
+            }
+            else if(limeYaw < goalPose)
+            {
+                robotdrive.drive(0.1, 0, 0, false);
+            }
+
+            if(limeYaw > goalPose)
+            {
+                robotdrive.drive(0, 0.1, 0, false);
+            }
+            else if(limeYaw < goalPose)
+            {
+                robotdrive.drive(0, -0.1, 0, false);
+            }
+        }
+
+        else 
+        {
+            robotdrive.drive(0, 0, 0, false);
+            isorienting = false;
+        }
+    }
+
+
+
+
+
+    public void beginOrienting()
+    {
+        isorienting = true;
+    }
+
+    public void stopOrienting()
+    {
+        isorienting = false;
+    }
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public double estimateDistance()
 	{

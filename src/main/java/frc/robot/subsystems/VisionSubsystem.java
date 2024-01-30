@@ -97,36 +97,43 @@ public class VisionSubsystem extends SubsystemBase {
 
      public void orient()
     {
-        double goalPose = 1;
+        double goalPose = 0;
         double goalDist = 2;
         double offset = 0;
-        if(Math.abs(limeYaw)- goalPose > 0.1) 
+        if(Math.abs(limeYaw) - goalPose > 3) 
         {
             if(limeYaw > goalPose)
             {
-                robotdrive.drive(0, 0, -0.1, false);
+                robotdrive.drive(0, 0, -1, false);
             }
             else if(limeYaw < goalPose)
             {
-                robotdrive.drive(0, 0, 0.1, false);
+                robotdrive.drive(0, 0, 1, false);
             }
         }
-        else if(Math.abs(limeX) > 0.1 || Math.abs(limeY) - goalDist > 0.1)
+        else 
         {
-            if(limeX > offset)
+            ;
+        }
+        // x - side, z - dist, y - turn
+        // currently works moving left towards target if the angle is correct
+        //else
+        if(Math.abs(limeX) > 0.1 || Math.abs(limeZ) - goalDist > 0.1)
+        {
+            if(limeZ > offset)
             {
                 robotdrive.drive(-0.1, 0, 0, false);
             }
-            else if(limeYaw < goalPose)
+            else if(limeZ < offset)//goalPose)
             {
                 robotdrive.drive(0.1, 0, 0, false);
             }
 
-            if(limeYaw > goalPose)
+            if(limeX > offset)//goalPose)
             {
                 robotdrive.drive(0, 0.1, 0, false);
             }
-            else if(limeYaw < goalPose)
+            else if(limeX < offset)//goalPose)
             {
                 robotdrive.drive(0, -0.1, 0, false);
             }
@@ -134,9 +141,10 @@ public class VisionSubsystem extends SubsystemBase {
 
         else 
         {
-            robotdrive.drive(0, 0, 0, false);
             isorienting = false;
+            robotdrive.drive(0, 0, 0, false);
         }
+        
     }
 
 

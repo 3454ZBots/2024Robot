@@ -13,9 +13,9 @@ import frc.robot.subsystems.DriveSubsystem;;
 public class VisionSubsystem extends SubsystemBase {
 
     NetworkTable table; 
-    NetworkTableEntry tx, ty, ta, targetpose;
-    double tX, tY, limeArea, limeX, limeY, limeZ, limeRoll, limePitch, limeYaw;
-    boolean isorienting;
+    NetworkTableEntry tx, ty, ta, targetpose, botpose;
+    double tX, tY, limeArea, limeX, limeY, limeZ, limeRoll, limePitch, limeYaw, botroll, botpitch, botyaw;
+    boolean isorienting, hasPose;
     DriveSubsystem robotdrive;
 
     public VisionSubsystem(DriveSubsystem drivesystem) {
@@ -34,7 +34,8 @@ public class VisionSubsystem extends SubsystemBase {
         ta = table.getEntry("ta");
 
         //X Y Z in meters, Roll Pitch Yaw in degrees
-        targetpose = table.getEntry("targetpose_cameraspace");
+        targetpose = table.getEntry("targetpose_robotspace");
+        botpose = table.getEntry("botpose_targetspace");
 
         //read values periodically
         tX = tx.getDouble(0.0);
@@ -49,6 +50,9 @@ public class VisionSubsystem extends SubsystemBase {
         limeRoll = targetpose.getDoubleArray(new double[6])[3];
         limePitch = targetpose.getDoubleArray(new double[6])[4];
         limeYaw = targetpose.getDoubleArray(new double[6])[5];
+        botpitch = botpose.getDoubleArray(new double[6])[4];
+        botroll = botpose.getDoubleArray(new double[6])[3];
+        botyaw = botpose.getDoubleArray(new double[6])[5];
 
         //post to smart dashboard periodically
         SmartDashboard.putNumber("tx", tX);
@@ -61,6 +65,9 @@ public class VisionSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("LimelightPitch", limePitch);
         SmartDashboard.putNumber("LimelightYaw", limeYaw);
         SmartDashboard.putNumber("distance", estimateDistance());
+        SmartDashboard.putNumber("botpitch", botpitch);
+        SmartDashboard.putNumber("botroll", botroll);
+        SmartDashboard.putNumber("botyaw", botyaw);
 
         if(isorienting)
         {
@@ -100,25 +107,25 @@ public class VisionSubsystem extends SubsystemBase {
         double goalPose = 0;
         double goalDist = 2;
         double offset = 0;
-        if(Math.abs(limeYaw) - goalPose > 3) 
+        if(Math.abs(limeYaw) - goalPose > 0.5 && !hasPose) 
         {
             if(limeYaw > goalPose)
             {
-                robotdrive.drive(0, 0, -1, false);
+                robotdrive.drive(0, 0, -0.2, false);
             }
             else if(limeYaw < goalPose)
             {
-                robotdrive.drive(0, 0, 1, false);
+                robotdrive.drive(0, 0, 0.2, false);
             }
         }
         else 
         {
-            ;
+            hasPose = true;
         }
         // x - side, z - dist, y - turn
         // currently works moving left towards target if the angle is correct
         //else
-        if(Math.abs(limeX) > 0.1 || Math.abs(limeZ) - goalDist > 0.1)
+        if((Math.abs(limeX) > 0.1 || Math.abs(limeZ) - goalDist > 0.1) && hasPose)
         {
             if(limeZ > offset)
             {
@@ -154,6 +161,7 @@ public class VisionSubsystem extends SubsystemBase {
     public void beginOrienting()
     {
         isorienting = true;
+        hasPose = false;
     }
 
     public void stopOrienting()

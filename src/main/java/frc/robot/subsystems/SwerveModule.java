@@ -10,9 +10,9 @@ import frc.robot.constants.SwerveConstants.SwerveModuleConstants;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
-import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkAbsoluteEncoder;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 
@@ -23,8 +23,8 @@ public class SwerveModule {
     private final RelativeEncoder m_drivingEncoder;
     private final AbsoluteEncoder m_turningEncoder;
   
-    private final SparkMaxPIDController m_drivingPIDController;
-    private final SparkMaxPIDController m_turningPIDController;
+    private final SparkPIDController m_drivingPIDController;
+    private final SparkPIDController m_turningPIDController;
 
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
@@ -53,7 +53,7 @@ public class SwerveModule {
     
         // Setup encoders and PID controllers for the driving and turning SPARKS MAX.
         m_drivingEncoder = m_drivingSparkMax.getEncoder();
-        m_turningEncoder = m_turningSparkMax.getAbsoluteEncoder(Type.kDutyCycle);
+        m_turningEncoder = m_turningSparkMax.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
         m_drivingPIDController = m_drivingSparkMax.getPIDController();
         m_turningPIDController = m_turningSparkMax.getPIDController();
         m_drivingPIDController.setFeedbackDevice(m_drivingEncoder);

@@ -1,33 +1,23 @@
 package frc.robot.RabidRobot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.Compressor;
 import org.opencv.core.Rect;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.MjpegServer;
-import edu.wpi.first.wpilibj.DigitalInput;
 
-import com.ctre.phoenix.CANifier;
-import com.ctre.phoenix.CANifier.LEDChannel;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
-// lime light 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Rabid extends TimedRobot
 {
@@ -83,6 +73,10 @@ public class Rabid extends TimedRobot
 	boolean orienting;
 
 	double steering_speed;
+
+	double move_speed;
+
+	int limelight_pulse_check;
 
 
 /* 
@@ -422,11 +416,15 @@ public class Rabid extends TimedRobot
 
 			//X Y Z in meters, Roll Pitch Yaw in degrees
 			NetworkTableEntry targetpose = table.getEntry("targetpose_cameraspace");
+			NetworkTableEntry botpose = table.getEntry("botpose_targetspace");
+			NetworkTableEntry tv = table.getEntry("tv");
+			
 			
 
 			//read values periodically
 			double tX = tx.getDouble(0.0);
 			double tY = ty.getDouble(0.0);
+			double value_count = tv.getDouble(0.0);
 
 			//tag area as percentage of image
 			double limeArea = ta.getDouble(0.0);
@@ -438,6 +436,12 @@ public class Rabid extends TimedRobot
 			double limeRoll = targetpose.getDoubleArray(new double[6])[3];
 			double limePitch = targetpose.getDoubleArray(new double[6])[4];
 			double limeYaw = targetpose.getDoubleArray(new double[6])[5];
+			double botroll = botpose.getDoubleArray(new double[6])[3];
+			double botpitch = botpose.getDoubleArray(new double[6])[4];
+			double botyaw = botpose.getDoubleArray(new double[6])[5];
+			double botZ = botpose.getDoubleArray(new double[6])[2];
+			double botX = botpose.getDoubleArray(new double[6])[0];
+			double botY = botpose.getDoubleArray(new double[6])[1];
 
 		
  
@@ -452,6 +456,14 @@ public class Rabid extends TimedRobot
 			SmartDashboard.putNumber("LimelightPitch", limePitch);
 			SmartDashboard.putNumber("LimelightYaw", limeYaw);
 			SmartDashboard.putNumber("distance", estimateDistance());
+			SmartDashboard.putNumber("botroll", botroll);
+			SmartDashboard.putNumber("botpitch", botpitch);
+			SmartDashboard.putNumber("botyaw", botyaw);
+			SmartDashboard.putNumber("botZ", botZ);
+			SmartDashboard.putNumber("botX", botX);
+			SmartDashboard.putNumber("botY", botY);
+
+
 			
 
 			drive.mechnumRobot(leftAxisY * -1, rightAxisX, leftAxisX * -1, false);
@@ -471,21 +483,30 @@ public class Rabid extends TimedRobot
 			float heading_error = (float) (-1.0 * tX);
 			float steering_adjust = 0.0f; 
 			SmartDashboard.putNumber("Heading Error", heading_error);
+			SmartDashboard.putNumber("Pulse_Check", limelight_pulse_check);
 			
 
 			if(aButton)
 			{
 				orienting = true;
-				steering_speed = 0.2;
 			}
 			
-			if(bButton)
+			if(bButton || limelight_pulse_check > 10)
 			{
 				orienting = false;
 			}
 
 			if(orienting)
 			{
+
+				if (value_count > 0)
+				{
+					limelight_pulse_check = 0;
+				}
+				else 
+				{
+					limelight_pulse_check++;
+				}
 				/*
 				if(Math.abs(distance_adjust) > 0.01)
 				{
@@ -513,24 +534,41 @@ public class Rabid extends TimedRobot
 					orienting = false;
 				}
 */
+
+				if(Math.abs(limeZ - 1) > 0.1)
+				{
+					if(limeZ - 1 < 0)
+					{
+						move_speed = -0.2;
+					}
+					else 
+					{
+						move_speed = 0.2;
+					}
+				}
+					else 
+					{
+						move_speed = 0;
+					}
+					
+
 				if(Math.abs(limeYaw) > 0.1)
 				{
 					if(limeYaw < 0)
 					{
-						drive.mechnumRobot(0, steering_speed * -1, 0, false);
+						steering_speed = -0.2;
 					}
-					else if(limeYaw > 0)
+					else
 					{
-						drive.mechnumRobot(0, steering_speed, 0, false);
+						steering_speed = 0.2;
 					}
-
 					
 				}
 				else
 				{
-					orienting = false;
+					steering_speed = 0;
 				}
-
+				drive.mechnumRobot(move_speed, steering_speed, 0, false);
 				SmartDashboard.putNumber("Steering Adjust", steering_adjust);
 				//drive.mechnumRobot(moveInputNum, steering_adjust, 0, false);
 				

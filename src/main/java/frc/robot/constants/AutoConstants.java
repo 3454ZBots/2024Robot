@@ -23,10 +23,10 @@ public final class AutoConstants {
      */
     public static final class AutoDriveConstants
     {
-        public static final double kMaxSpeedMetersPerSecond = 10;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 15;
-        public static final double kMaxAngularSpeedRadiansPerSecond = 12*Math.PI;
-        public static final double kMaxAngularSpeedRadiansPerSecondSquared = 4;
+        public static final double kMaxSpeedMetersPerSecond = 3;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
     
         public static final double kPXController = 1;
         public static final double kPYController = 1;
@@ -45,12 +45,9 @@ public final class AutoConstants {
         public static final TrajectoryConfig kAutoTrajectoryConfigForward = new TrajectoryConfig(AutoDriveConstants.kMaxSpeedMetersPerSecond,
             AutoDriveConstants.kMaxAccelerationMetersPerSecondSquared)
             // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(SwerveDriveConstants.kDriveKinematics).setReversed(true);
- 
-        public static final TrajectoryConfig kAutoTrajectoryConfigBackward = new TrajectoryConfig(AutoDriveConstants.kMaxSpeedMetersPerSecond,
-            AutoDriveConstants.kMaxAccelerationMetersPerSecondSquared)
-            // Add kinematics to ensure max speed is actually obeyed
             .setKinematics(SwerveDriveConstants.kDriveKinematics);
+ 
+ 
 
         public static final Trajectory kDriveToGridTrajectory =
             TrajectoryGenerator.generateTrajectory(
@@ -70,7 +67,7 @@ public final class AutoConstants {
                 List.of(new Translation2d(10, 0), new Translation2d(20, 0), new Translation2d(30, 0)),
                 // End 1 meters straight ahead of where we started, facing forward
                 new Pose2d(40, 0, new Rotation2d(0)),
-                kAutoTrajectoryConfigBackward);
+                kAutoTrajectoryConfigForward);
 
         public static final Trajectory kDriveAcrossOuterLine =
             TrajectoryGenerator.generateTrajectory(
@@ -90,7 +87,7 @@ public final class AutoConstants {
                 List.of(new Translation2d(25, 0)), 
                 
                 new Pose2d(50, 0, new Rotation2d(0)), 
-                kAutoTrajectoryConfigBackward);
+                kAutoTrajectoryConfigForward);
                 
       /* public static final Trajectory kLeftTurnTrajectory =
             TrajectoryGenerator.generateTrajectory(
@@ -121,6 +118,6 @@ public final class AutoConstants {
         List.of(new Translation2d(0.5, 0)), 
         
         new Pose2d(1, 0, new Rotation2d(0)), 
-        kAutoTrajectoryConfigBackward);
+        kAutoTrajectoryConfigForward);
    }
 }

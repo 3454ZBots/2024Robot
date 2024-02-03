@@ -257,28 +257,19 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        /* 
+        
         //Get final composite command
-        Command finalCommandGroup = getFinalAutoCommand();
+        //Command finalCommandGroup = getFinalAutoCommand();
 
         // Reset odometry to the starting pose of the trajectory.
-        m_robotDrive.resetOdometry(AutoTrajectoryConstants.kDoNothingTrajectory.getInitialPose());
+        //m_robotDrive.resetOdometry(AutoTrajectoryConstants.kDoNothingTrajectory.getInitialPose());
 
         // Run path following command, then stop at the end.
-        return finalCommandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-        */
+        //return finalCommandGroup.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+        
 
       //  m_robotDrive.resetOdometry(AutoTrajectoryConstants.kLeftTurnTrajectory.getInitialPose());
 
-        Trajectory kDriveAcrossOuterLine = 
-            TrajectoryGenerator.generateTrajectory(
-                // Start at the origin facing the +X direction
-                new Pose2d(0, 0, new Rotation2d(0)),
-                // Pass through these interior waypoints, helping to ensure a straight path
-                List.of(new Translation2d(1, 0)),
-                // End 1 meters straight ahead of where we started, facing forward
-                new Pose2d(2, 0, new Rotation2d(0)),
-                AutoTrajectoryConstants.kAutoTrajectoryConfigBackward);
 
         SequentialCommandGroup finalAutoCommand = new SequentialCommandGroup();
 
@@ -295,7 +286,7 @@ public class RobotContainer {
            // finalAutoCommand.addCommands(phaseTwo);
         }*/
 
-        m_robotDrive.resetOdometry(kDriveAcrossOuterLine.getInitialPose());
+
       //  finalAutoCommand.addCommands(m_doNothingCommand);
         return finalAutoCommand;
     }

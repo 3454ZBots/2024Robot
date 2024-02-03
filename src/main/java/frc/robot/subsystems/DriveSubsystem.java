@@ -1,23 +1,17 @@
 package frc.robot.subsystems;
-import edu.wpi.first.wpilibj.SPI;
+import com.ctre.phoenix6.hardware.Pigeon2;
+
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.SwerveConstants;
-import frc.robot.constants.BasicConstants.ControllerConstants;
-import frc.robot.constants.SwerveConstants.NeoMotorConstants;
 import frc.robot.constants.SwerveConstants.SwerveDriveConstants;
-import com.ctre.phoenix6.hardware.Pigeon2;
 
 
 /**
@@ -54,16 +48,13 @@ public class DriveSubsystem extends SubsystemBase {
     SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
         SwerveDriveConstants.kDriveKinematics,
         Rotation2d.fromDegrees(getHeading()),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        });
+        getModulePositions());
 
+        SwerveDrivePoseEstimator m_PoseEstimator;
     /** Creates a new DriveSubsystem. */
     public DriveSubsystem() {
         m_gyro.setYaw(0);
+        m_PoseEstimator = new SwerveDrivePoseEstimator(SwerveDriveConstants.kDriveKinematics,Rotation2d.fromDegrees(m_gyro.getAngle() * -1), getModulePositions(), getPose());
     }
 
      
@@ -81,6 +72,11 @@ public class DriveSubsystem extends SubsystemBase {
     
   }
 
+    @Override
+    public void simulationPeriodic ()
+    {
+        m_PoseEstimator.update(Rotation2d.fromDegrees(m_gyro.getAngle() * -1), getModulePositions());
+    }
     /**
      * Returns the currently-estimated pose of the robot.
      *
@@ -221,7 +217,15 @@ public class DriveSubsystem extends SubsystemBase {
     public double getTurnRate() {
         return m_gyro.getRate() * (SwerveDriveConstants.kGyroReversed ? -1.0 : 1.0);
     }
-
+    private SwerveModulePosition[] getModulePositions() 
+    {
+        return  new SwerveModulePosition[] {
+                m_frontLeft.getPosition(),
+                m_frontRight.getPosition(),
+                m_rearLeft.getPosition(),
+                m_rearRight.getPosition()
+        };
+}
     
     //Commands we added
 }

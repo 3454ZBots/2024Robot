@@ -1,4 +1,6 @@
 package frc.robot.subsystems;
+import javax.xml.datatype.DatatypeConstants.Field;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -9,6 +11,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.SwerveConstants.SwerveDriveConstants;
@@ -42,7 +46,7 @@ public class DriveSubsystem extends SubsystemBase {
     
     // The gyro sensor
     private Pigeon2 m_gyro = new Pigeon2(SwerveDriveConstants.PIGEON_ID);
-
+    private Field2d m_field = new Field2d();
 
     // Odometry class for tracking robot pose
     SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
@@ -55,6 +59,8 @@ public class DriveSubsystem extends SubsystemBase {
     public DriveSubsystem() {
         m_gyro.setYaw(0);
         m_PoseEstimator = new SwerveDrivePoseEstimator(SwerveDriveConstants.kDriveKinematics,Rotation2d.fromDegrees(m_gyro.getAngle() * -1), getModulePositions(), getPose());
+
+        SmartDashboard.putData("field pose", m_field);
     }
 
      
@@ -76,6 +82,8 @@ public class DriveSubsystem extends SubsystemBase {
     public void simulationPeriodic ()
     {
         m_PoseEstimator.update(Rotation2d.fromDegrees(m_gyro.getAngle() * -1), getModulePositions());
+        m_field.setRobotPose(m_PoseEstimator.getEstimatedPosition());
+
     }
     /**
      * Returns the currently-estimated pose of the robot.
@@ -225,7 +233,7 @@ public class DriveSubsystem extends SubsystemBase {
                 m_rearLeft.getPosition(),
                 m_rearRight.getPosition()
         };
-}
+    }
     
     //Commands we added
 }

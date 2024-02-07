@@ -42,7 +42,7 @@ public class RobotContainer {
 
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
     private final VisionSubsystem m_robotVision = new VisionSubsystem(m_robotDrive);
-    //private final IntakeSubsystem m_robotIntake = new IntakeSubsystem();
+    private final IntakeSubsystem m_robotIntake = new IntakeSubsystem();
 
     // The driver's controller
     CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVE_REMOTE_PORT);
@@ -120,8 +120,8 @@ public class RobotContainer {
     
 
          
-        //m_driverController.b().onTrue(Commands.runOnce(() -> m_robotIntake.IntakeOn()));
-        //m_driverController.b().onFalse(Commands.runOnce(() -> m_robotIntake.onRelease()));
+        m_driverController.b().onTrue(Commands.runOnce(() -> m_robotIntake.IntakePressed()));
+        m_driverController.b().onFalse(Commands.runOnce(() -> m_robotIntake.IntakeReleased()));
   
 
         m_driverController.x().onTrue(Commands.runOnce(() -> m_robotVision.beginOrienting()));

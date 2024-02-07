@@ -9,6 +9,9 @@
     }
   },
   "NetworkTables Info": {
+    "AdvantageScope@1": {
+      "open": true
+    },
     "visible": true
   }
 }

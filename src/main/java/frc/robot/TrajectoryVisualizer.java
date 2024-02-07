@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.AutoConstants.AutoDriveConstants;
 import frc.robot.constants.AutoConstants.AutoTrajectoryConstants;
 import frc.robot.constants.SwerveConstants.SwerveDriveConstants;
-public class Simulation extends TimedRobot {
+public class TrajectoryVisualizer extends TimedRobot {
     public void robotInit()
     {
        /*
@@ -35,8 +35,10 @@ public class Simulation extends TimedRobot {
 
 
         Field2d m_field = new Field2d();
-        SmartDashboard.putData(m_field);
+        SmartDashboard.putData("Field", m_field);
+       
 
-        m_field.getObject("traj").setTrajectory(AutoTrajectoryConstants.kDriveAcrossOuterLine);
+        m_field.getObject("traj").setTrajectory(AutoTrajectoryConstants.kChargeStationTrajectory);
+        //m_field.setRobotPose(robotPose);
     }
 }

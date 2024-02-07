@@ -1,5 +1,8 @@
 package frc.robot.RabidRobot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.opencv.core.Rect;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -7,6 +10,10 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -17,7 +24,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.constants.AutoConstants;
+import frc.robot.constants.AutoConstants.AutoTrajectoryConstants;
+import edu.wpi.first.math.trajectory.Trajectory;
 
 public class Rabid extends TimedRobot
 {
@@ -469,6 +480,32 @@ public class Rabid extends TimedRobot
 			drive.mechnumRobot(leftAxisY * -1, rightAxisX, leftAxisX * -1, false);
 
 
+
+			if(aButton)
+			{
+				int numPoints = 6;
+				double goalX = limeX;
+				double goalY = limeZ - 2;
+				double xDiff = goalX/numPoints;
+				double yDiff = goalY/numPoints;
+
+				Pose2d startPoint = new Pose2d();
+				Pose2d endPoint = new Pose2d(goalX, goalY, Rotation2d.fromDegrees(limePitch));
+				List<Translation2d>  midpoints = new ArrayList<>();
+				midpoints.add(new Translation2d(0, 0));
+
+				for (int I = 0; I < numPoints; I++)
+				{
+					midpoints.add(new Translation2d((I + 1) * xDiff, (I + 1) * yDiff));
+				}
+
+				Trajectory limeTrajectory = TrajectoryGenerator.generateTrajectory(startPoint, midpoints, endPoint, AutoTrajectoryConstants.kAutoTrajectoryConfigForward);
+				Field2d m_field = new Field2d();
+				SmartDashboard.putData("Field", m_field);
+				m_field.getObject("traj").setTrajectory(limeTrajectory);
+			}
+
+
 			// limelight distance variables  
 			float kpDistance = -0.1f; // proportional control constant for distance
 			float current_distance = (float) estimateDistance();
@@ -485,7 +522,7 @@ public class Rabid extends TimedRobot
 			SmartDashboard.putNumber("Heading Error", heading_error);
 			SmartDashboard.putNumber("Pulse_Check", limelight_pulse_check);
 			
-
+			/* 
 			if(aButton)
 			{
 				orienting = true;
@@ -533,8 +570,10 @@ public class Rabid extends TimedRobot
 				if (Math.abs(distance_adjust) <= 0.01 || (tX <= 1.0 && tX >= -1.0)){
 					orienting = false;
 				}
-*/
+				*/
 
+
+				/*
 				if(Math.abs(limeZ - 1) > 0.1)
 				{
 					if(limeZ - 1 < 0)
@@ -546,10 +585,10 @@ public class Rabid extends TimedRobot
 						move_speed = 0.2;
 					}
 				}
-					else 
-					{
-						move_speed = 0;
-					}
+				else 
+				{
+					move_speed = 0;
+				}
 					
 
 				if(Math.abs(limeYaw) > 0.1)
@@ -586,20 +625,24 @@ public class Rabid extends TimedRobot
 				{
 					drive.mechnumRobot(0, 0.2, 0, false);
 				}
-				*/
+				
 
 			}
-
+			*/
 			
-
 		}
-
+		/*
 		SmartDashboard.putNumber("Front Left Drive", drive.getFL());
 		SmartDashboard.putNumber("Front Right Drive", drive.getFR());
 		SmartDashboard.putNumber("Rear Left Drive", drive.getRL());
 		SmartDashboard.putNumber("Rear Right Drive", drive.getRR());
 		SmartDashboard.putBoolean("Shooting Mode Active (Y)", roboDirection > 0);
 		SmartDashboard.putBoolean("Intake Mode Avtive (Y)", roboDirection < 0);
+		*/
+
+		
+
+
 	}
 
 	public double estimateDistance()

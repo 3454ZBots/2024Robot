@@ -86,7 +86,7 @@ public final class AutoConstants {
                 
                 List.of(new Translation2d(25, 0)), 
                 
-                new Pose2d(50, 0, new Rotation2d(0)), 
+                new Pose2d(50, 0, new Rotation2d(0)),
                 kAutoTrajectoryConfigForward);
                 
       /* public static final Trajectory kLeftTurnTrajectory =

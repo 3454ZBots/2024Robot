@@ -7,29 +7,38 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.MechanismConstants;
 public class IntakeSubsystem extends SubsystemBase 
 {
+    
 
-    boolean RobotIntake = false;
     boolean IntakeOn = false;
-    boolean buttonReleased = false;
+    boolean wasReleased = true;
 
     CANSparkMax IntakeController = new CANSparkMax(MechanismConstants.INTAKE_CAN_ID, MotorType.kBrushless);
 
-    public void IntakeOn() 
+    public void IntakePressed() 
     {
-        IntakeController.set(0.5);
-
-        if (buttonReleased == true)
+        if(wasReleased)
         {
-            IntakeController.set(0);
-            buttonReleased = false;
-
+            if(IntakeOn == false)
+            {
+                IntakeController.set(0.5);
+                IntakeOn = true;
+            }
+            else
+            {
+                IntakeController.set(0);
+                IntakeOn = false;
+            }
+            wasReleased = false;
         }
     }
 
-    public void onRelease() 
+    public void IntakeReleased() 
     {
-        buttonReleased = true;  
+       wasReleased = true;  
 
     }
-    
+
+
+
+
 }

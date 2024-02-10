@@ -108,8 +108,8 @@ public class SwerveModule {
     
         // Save the SPARK MAX configurations. If a SPARK MAX browns out during
         // operation, it will maintain the above configurations.
-        m_drivingSparkMax.burnFlash();
-        m_turningSparkMax.burnFlash();
+      //  m_drivingSparkMax.burnFlash();
+       // m_turningSparkMax.burnFlash();
     
         m_chassisAngularOffset = chassisAngularOffset;
         m_desiredState.angle = new Rotation2d(m_turningEncoder.getPosition());
@@ -163,8 +163,8 @@ public class SwerveModule {
 
         //SmartDashboard.putNumber("optimizedDesiredState speedMetersPerSecond " + m_drivingSparkMax.getDeviceId(), 
         //    optimizedDesiredState.speedMetersPerSecond);
-        System.out.println(speedRPMs);
-        System.out.println(optimizedangle);
+        //System.out.println(speedRPMs);
+        //System.out.println(optimizedangle);
         // Command driving and turning SPARKS MAX towards their respective setpoints.
         m_drivingPIDController.setReference(speedRPMs, CANSparkMax.ControlType.kVelocity);
         turningresult = m_turningPIDController.setReference(optimizedangle, CANSparkMax.ControlType.kPosition);

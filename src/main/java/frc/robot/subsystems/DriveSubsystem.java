@@ -48,6 +48,9 @@ public class DriveSubsystem extends SubsystemBase {
     private Pigeon2 m_gyro = new Pigeon2(SwerveDriveConstants.PIGEON_ID);
     private Field2d m_field = new Field2d();
 
+
+    boolean isFieldOriented = true;
+
     // Odometry class for tracking robot pose
     SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
         SwerveDriveConstants.kDriveKinematics,
@@ -111,6 +114,26 @@ public class DriveSubsystem extends SubsystemBase {
             },
             pose);
     }
+
+    public void toggleFieldOriented(boolean pressed)
+    {
+
+    
+    }
+
+
+    public void drivePeriodic(double controllerLY, double controllerLX, double controllerRX)
+    {
+
+
+
+
+
+        drive(controllerLY, controllerLX, controllerRX, false);
+    }
+
+
+
 
     /**
      * Method to drive the robot using joystick info.

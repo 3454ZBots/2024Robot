@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.constants.AutoConstants;
 import frc.robot.constants.AutoConstants.AutoTrajectoryConstants;
 import edu.wpi.first.math.trajectory.Trajectory;
 
@@ -37,7 +36,7 @@ public class Rabid extends TimedRobot
 	private RabidDrive drive;
 
 	CANSparkMax RRSparkMax ,RLSparkMax, FLSparkMax;
-	VictorSPX ShootVic, IntakeVic1, IntakeVic2, FRVic;// ClimbVic;
+	VictorSPX ShootVic, IntakeVic1, IntakeVic2, FRVic;
 	VictorSP MidtakeSP;
 
 	NetworkTable table;
@@ -89,13 +88,6 @@ public class Rabid extends TimedRobot
 
 	int limelight_pulse_check;
 
-
-/* 
-	CANifier CanLed;
-	int LedSwap;
-	double LedA, LedB, LedC;
-	*/
-
 	/**
 	 * Sets up the robot, setting time to 0, and initializing other mechanisms. 
 	 */
@@ -142,23 +134,6 @@ public class Rabid extends TimedRobot
 		table = NetworkTableInstance.getDefault().getTable("limelight-unique");
 		NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
 		NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
-
-
-
-
-		
-
-
-
-/* 
-		CanLed = new CANifier(6);
-
-		LedA = 0.5;
-		LedB = 0;
-		LedC = 0;
-
-		LedSwap = 0;
-		*/
 	}
 	
 	public void teleopPeriodic() 
@@ -175,12 +150,6 @@ public class Rabid extends TimedRobot
 		}
 
 		SmartDashboard.putBoolean("Intake", intake);
-		SmartDashboard.putBoolean("UpSwitch", UpSwitch.get());
-
-		
-
-		//SmartDashboard.putBoolean("Compressor On", compressor.isEnabled());	
-		//SmartDashboard.putBoolean("Pneumatic Switch State", compressor.getPressureSwitchValue());
 	}
 
 	public void autonomousInit()
@@ -193,31 +162,6 @@ public class Rabid extends TimedRobot
 		IntakeVic1.set(ControlMode.PercentOutput, 0);
 		IntakeVic2.set(ControlMode.PercentOutput, 0);
 		drive.mechnumRobot(0, 0, 0, false);
-
-/* 
-		CanLed.setLEDOutput(LedA, LEDChannel.LEDChannelA);  //Blue	
-		CanLed.setLEDOutput(LedB, LEDChannel.LEDChannelB);	//Red	
-		CanLed.setLEDOutput(LedC, LEDChannel.LEDChannelC);	//Green
-
-		//Blue and Yellow Flash Loop
-		
-		if(LedSwap == 10) {
-			if(LedC == 0) {
-				LedC = 1;
-				LedB = 1;
-				LedA = 0;
-			}
-			else {
-				LedC = 0;
-				LedB = 0;
-				LedA = 0.5;
-			}
-			LedSwap = 0;
-		}
-		else {
-			LedSwap ++;
-		}
-*/
 	}
 
 	public void autonomousPeriodic()
@@ -418,32 +362,24 @@ public class Rabid extends TimedRobot
 			bButton = driveRemote.getRawButton(RabidConstants.BUTTON_B);
 			yButton = driveRemote.getRawButton(RabidConstants.BUTTON_Y);
 
-
 			//reference documentation: https://docs.limelightvision.io/en/latest/getting_started.html#basic-programming
 
 			NetworkTableEntry tx = table.getEntry("tx");
 			NetworkTableEntry ty = table.getEntry("ty");
-			NetworkTableEntry ta = table.getEntry("ta");
 
 			//X Y Z in meters, Roll Pitch Yaw in degrees
 			NetworkTableEntry targetpose = table.getEntry("targetpose_cameraspace");
 			NetworkTableEntry botpose = table.getEntry("botpose_targetspace");
 			NetworkTableEntry tv = table.getEntry("tv");
-			
-			
 
 			//read values periodically
 			double tX = tx.getDouble(0.0);
 			double tY = ty.getDouble(0.0);
 			double numberOfTargets = tv.getDouble(0.0);
 
-			//tag area as percentage of image
-			double limeArea = ta.getDouble(0.0);
-
-
 			double limeZ = targetpose.getDoubleArray(new double[6])[2];
 			double limeX = targetpose.getDoubleArray(new double[6])[0];
-			double limeY = targetpose.getDoubleArray(new double[6])[1];
+		/* 	double limeY = targetpose.getDoubleArray(new double[6])[1];
 			double limeRoll = targetpose.getDoubleArray(new double[6])[3];
 			double limePitch = targetpose.getDoubleArray(new double[6])[4];
 			double limeYaw = targetpose.getDoubleArray(new double[6])[5];
@@ -452,15 +388,10 @@ public class Rabid extends TimedRobot
 			double botyaw = botpose.getDoubleArray(new double[6])[5];
 			double botZ = botpose.getDoubleArray(new double[6])[2];
 			double botX = botpose.getDoubleArray(new double[6])[0];
-			double botY = botpose.getDoubleArray(new double[6])[1];
-
-		
+			double botY = botpose.getDoubleArray(new double[6])[1]; */
  
 			//post to smart dashboard periodically
-			SmartDashboard.putNumber("tx", tX);
-			SmartDashboard.putNumber("ty", tY);
-			SmartDashboard.putNumber("LimelightArea (ta)", limeArea);
-			SmartDashboard.putNumber("LimelightZ", limeZ);
+		/* 	SmartDashboard.putNumber("LimelightZ", limeZ);
 			SmartDashboard.putNumber("LimelightX", limeX);
 			SmartDashboard.putNumber("LimelightY", limeY);
 			SmartDashboard.putNumber("LimelightRoll", limeRoll);
@@ -472,14 +403,9 @@ public class Rabid extends TimedRobot
 			SmartDashboard.putNumber("botyaw", botyaw);
 			SmartDashboard.putNumber("botZ", botZ);
 			SmartDashboard.putNumber("botX", botX);
-			SmartDashboard.putNumber("botY", botY);
-
-
-			
+			SmartDashboard.putNumber("botY", botY);	*/
 
 			drive.mechnumRobot(leftAxisY * -1, rightAxisX, leftAxisX * -1, false);
-
-
 
 			if(aButton && numberOfTargets > 0)
 			{
@@ -503,145 +429,7 @@ public class Rabid extends TimedRobot
 				SmartDashboard.putData("Field", m_field);
 				m_field.getObject("traj").setTrajectory(limeTrajectory);
 			}
-
-
-			// limelight distance variables  
-			float kpDistance = -0.1f; // proportional control constant for distance
-			float current_distance = (float) estimateDistance();
-			float desired_distance = 1.1f; // how far you want to be from the april tag
-			float kpAim = -0.1f;
-			float min_aim_command = 0.05f;
-			float distance_error= desired_distance - current_distance;
-			float distance_adjust = kpDistance * distance_error;
-			SmartDashboard.putNumber("DistanceAdjust", distance_adjust);
-			SmartDashboard.putNumber("DistanceError", distance_error);
-			double moveInputNum = 0.0;
-			float heading_error = (float) (-1.0 * tX);
-			float steering_adjust = 0.0f; 
-			SmartDashboard.putNumber("Heading Error", heading_error);
-			SmartDashboard.putNumber("Pulse_Check", limelight_pulse_check);
-			
-			/* 
-			if(aButton)
-			{
-				orienting = true;
-			}
-			
-			if(bButton || limelight_pulse_check > 10)
-			{
-				orienting = false;
-			}
-
-			if(orienting)
-			{
-
-				if (value_count > 0)
-				{
-					limelight_pulse_check = 0;
-				}
-				else 
-				{
-					limelight_pulse_check++;
-				}
-				/*
-				if(Math.abs(distance_adjust) > 0.01)
-				{
-					if (distance_adjust > 0)
-					{
-						moveInputNum = 0.2;
-					}
-					else if (distance_adjust < 0)
-					{
-						moveInputNum = -0.2;
-					}
-				}
-				*/
-
-				/* 
-				if (tX > 1.0) {
-					steering_adjust = -0.2f;
-					//steering_adjust = kpAim * heading_error - min_aim_command;
-				} else if (tX < -1.0) {
-					steering_adjust = 0.2f;
-					//steering_adjust = kpAim * heading_error + min_aim_command;
-				}
-
-				if (Math.abs(distance_adjust) <= 0.01 || (tX <= 1.0 && tX >= -1.0)){
-					orienting = false;
-				}
-				*/
-
-
-				/*
-				if(Math.abs(limeZ - 1) > 0.1)
-				{
-					if(limeZ - 1 < 0)
-					{
-						move_speed = -0.2;
-					}
-					else 
-					{
-						move_speed = 0.2;
-					}
-				}
-				else 
-				{
-					move_speed = 0;
-				}
-					
-
-				if(Math.abs(limeYaw) > 0.1)
-				{
-					if(limeYaw < 0)
-					{
-						steering_speed = -0.2;
-					}
-					else
-					{
-						steering_speed = 0.2;
-					}
-					
-				}
-				else
-				{
-					steering_speed = 0;
-				}
-				drive.mechnumRobot(move_speed, steering_speed, 0, false);
-				SmartDashboard.putNumber("Steering Adjust", steering_adjust);
-				//drive.mechnumRobot(moveInputNum, steering_adjust, 0, false);
-				
-				/*
-				if(limeRx <= 5 && limeRx >= -5)
-				{
-					orienting = false;
-					drive.mechnumRobot(0, 0, 0, false);
-				}
-				else if(limeRx > 0)
-				{
-					drive.mechnumRobot(0, -0.2, 0, false);
-				}
-				else if(limeRx < 0)
-				{
-					drive.mechnumRobot(0, 0.2, 0, false);
-				}
-				
-
-			}
-			*/
-			
 		}
-		/*
-		SmartDashboard.putNumber("Front Left Drive", drive.getFL());
-		SmartDashboard.putNumber("Front Right Drive", drive.getFR());
-		SmartDashboard.putNumber("Rear Left Drive", drive.getRL());
-		SmartDashboard.putNumber("Rear Right Drive", drive.getRR());
-		SmartDashboard.putBoolean("Shooting Mode Active (Y)", roboDirection > 0);
-		SmartDashboard.putBoolean("Intake Mode Avtive (Y)", roboDirection < 0);
-		*/
-
-		
-
-
 	}
 
 	public double estimateDistance()
@@ -663,7 +451,6 @@ public class Rabid extends TimedRobot
 	
 		//calculate distance
 		double distanceFromLimelightToGoalMeters = (goalHeightMeters - limelightLensHeightMeters) / Math.tan(angleToGoalRadians);
-		//SmartDashboard.putNumber("real distance from math", distanceFromLimelightToGoalMeters);
 		return distanceFromLimelightToGoalMeters;
 	}
 }

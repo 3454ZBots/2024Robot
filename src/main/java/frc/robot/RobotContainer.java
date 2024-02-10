@@ -101,7 +101,7 @@ public class RobotContainer {
                     m_driverController.getLeftY(),
                     m_driverController.getLeftX(),
                     m_driverController.getRightX(),
-                    false),
+                    true),
                 m_robotDrive));
         
         m_robotVision.setDefaultCommand(new RunCommand(() -> m_robotVision.visionPeriodic(), m_robotVision));
@@ -114,18 +114,14 @@ public class RobotContainer {
      * Used to define your button->command mappings with {@link m_driverController}.
      */
     private void configureButtonBindings() {
-
-        
-        
-    
-
-         
         m_driverController.b().onTrue(Commands.runOnce(() -> m_robotIntake.IntakePressed()));
         m_driverController.b().onFalse(Commands.runOnce(() -> m_robotIntake.IntakeReleased()));
-  
 
-        m_driverController.x().onTrue(Commands.runOnce(() -> m_robotVision.beginOrienting()));
-        m_driverController.a().onTrue(Commands.runOnce(() -> m_robotVision.stopOrienting()));
+        m_driverController.rightBumper().onTrue(Commands.runOnce(() -> m_robotDrive.toggleFieldOriented(true)));
+        m_driverController.rightBumper().onFalse(Commands.runOnce(() -> m_robotDrive.toggleFieldOriented(false)));
+
+     //   m_driverController.x().onTrue(Commands.runOnce(() -> m_robotVision.beginOrienting()));
+     //   m_driverController.a().onTrue(Commands.runOnce(() -> m_robotVision.stopOrienting()));
         m_driverController.y().onTrue(Commands.runOnce(() -> m_robotDrive.setX()));
     }
 

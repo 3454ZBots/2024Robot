@@ -435,7 +435,7 @@ public class Rabid extends TimedRobot
 			//read values periodically
 			double tX = tx.getDouble(0.0);
 			double tY = ty.getDouble(0.0);
-			double value_count = tv.getDouble(0.0);
+			double numberOfTargets = tv.getDouble(0.0);
 
 			//tag area as percentage of image
 			double limeArea = ta.getDouble(0.0);
@@ -481,23 +481,22 @@ public class Rabid extends TimedRobot
 
 
 
-			if(aButton)
+			if(aButton && numberOfTargets > 0)
 			{
-				int numPoints = 6;
-				double goalX = limeX;
-				double goalY = limeZ - 2;
-				double xDiff = goalX/numPoints;
-				double yDiff = goalY/numPoints;
+				int numLengths = 3;
+				//sideways on the robot is vertical on advantage scope
+				double goalY = limeX * -1;
+				//sidways on the field is X, the distance for the limelight is Z
+				double goalX = limeZ - 2;
+				double xDiff = goalX/numLengths;
+				double yDiff = goalY/numLengths;
 
 				Pose2d startPoint = new Pose2d();
-				Pose2d endPoint = new Pose2d(goalX, goalY, Rotation2d.fromDegrees(limePitch));
-				List<Translation2d>  midpoints = new ArrayList<>();
-				midpoints.add(new Translation2d(0, 0));
+				Pose2d endPoint = new Pose2d(goalX, goalY, Rotation2d.fromDegrees(0));
 
-				for (int I = 0; I < numPoints; I++)
-				{
-					midpoints.add(new Translation2d((I + 1) * xDiff, (I + 1) * yDiff));
-				}
+				List<Translation2d>  midpoints = new ArrayList<>();
+				midpoints.add(new Translation2d(xDiff, yDiff));
+				midpoints.add(new Translation2d(2 * xDiff, 2 * yDiff));
 
 				Trajectory limeTrajectory = TrajectoryGenerator.generateTrajectory(startPoint, midpoints, endPoint, AutoTrajectoryConstants.kAutoTrajectoryConfigForward);
 				Field2d m_field = new Field2d();

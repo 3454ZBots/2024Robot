@@ -29,7 +29,6 @@ public class SwerveModule {
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
-    private double optimizedagngle = 0;
   
     private double m_chassisAngularOffset = 0;
     private SwerveModuleState m_desiredState = new SwerveModuleState(0.0, new Rotation2d());
@@ -158,16 +157,17 @@ public class SwerveModule {
         SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(correctedDesiredState,
             new Rotation2d(m_turningEncoder.getPosition()));
 
-        optimizedDesiredState.speedMetersPerSecond = (optimizedDesiredState.speedMetersPerSecond / 
+        double speedRPMs = (optimizedDesiredState.speedMetersPerSecond / 
             SwerveModuleConstants.kWheelCircumferenceMeters) * 60;
-        optimizedagngle = optimizedDesiredState.angle.getRadians();
+        double optimizedangle = optimizedDesiredState.angle.getRadians();
 
         //SmartDashboard.putNumber("optimizedDesiredState speedMetersPerSecond " + m_drivingSparkMax.getDeviceId(), 
         //    optimizedDesiredState.speedMetersPerSecond);
-
+        System.out.println(speedRPMs);
+        System.out.println(optimizedangle);
         // Command driving and turning SPARKS MAX towards their respective setpoints.
-        m_drivingPIDController.setReference(optimizedDesiredState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
-        turningresult = m_turningPIDController.setReference(optimizedagngle, CANSparkMax.ControlType.kPosition);
+        m_drivingPIDController.setReference(speedRPMs, CANSparkMax.ControlType.kVelocity);
+        turningresult = m_turningPIDController.setReference(optimizedangle, CANSparkMax.ControlType.kPosition);
 
         //SmartDashboard.putNumber("driving encoder - Can ID" + m_drivingSparkMax.getDeviceId(), m_drivingEncoder.getVelocity());
         //SmartDashboard.putNumber("desired speed (RPMs) for Spark " + m_drivingSparkMax.getDeviceId(), optimizedDesiredState.speedMetersPerSecond);

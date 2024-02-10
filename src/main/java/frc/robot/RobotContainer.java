@@ -142,7 +142,7 @@ public class RobotContainer {
         //first phase commands
         
 
-
+/*
         m_driveToGridCommand = new SwerveControllerCommand(
             AutoTrajectoryConstants.kDriveToGridTrajectory,
             m_robotDrive::getPose, // Functional interface to feed supplier
@@ -178,6 +178,7 @@ public class RobotContainer {
             thetaController,
             m_robotDrive::setModuleStates,
             m_robotDrive);
+            */
  /* 
         m_leftTurnCommand = new SwerveControllerCommand(
                 AutoTrajectoryConstants.kDriveForwardTrajectory,
@@ -191,6 +192,7 @@ public class RobotContainer {
                 m_robotDrive::setModuleStates,
                 m_robotDrive);
 */
+/* 
         m_doNothingCommand = new SwerveControllerCommand(
             AutoTrajectoryConstants.kDoNothingTrajectory,
             m_robotDrive::getPose, // Functional interface to feed supplier
@@ -212,6 +214,7 @@ public class RobotContainer {
             thetaController,
             m_robotDrive::setModuleStates,
             m_robotDrive);
+            */
 
 /* 
         m_approachAndPlaceCone = new SequentialCommandGroup(m_driveToGridCommand);

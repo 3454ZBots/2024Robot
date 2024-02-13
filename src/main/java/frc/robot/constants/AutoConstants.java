@@ -48,78 +48,17 @@ public final class AutoConstants {
             .setKinematics(SwerveDriveConstants.kDriveKinematics);
  
  
-/*
+
         public static final Trajectory kDriveToGridTrajectory =
             TrajectoryGenerator.generateTrajectory(
                 // Start at the origin facing the +X direction
                 new Pose2d(0, 0, new Rotation2d(0)),
                 // Pass through these interior waypoints, helping to ensure a straight path
-                List.of(new Translation2d(-5, 0)),
+                List.of(new Translation2d(5, 0)),
                 // End 1 meters straight ahead of where we started, facing forward
-                new Pose2d(-10, 0, new Rotation2d(0)),
+                new Pose2d(10, 0, new Rotation2d(0)),
                 kAutoTrajectoryConfigForward);
 
-        public static final Trajectory kDriveAcrossInnerLine =
-            TrajectoryGenerator.generateTrajectory(
-                // Start at the origin facing the +X direction
-                new Pose2d(0, 0, new Rotation2d(0)),
-                // Pass through these interior waypoints, helping to ensure a straight path
-                List.of(new Translation2d(10, 0), new Translation2d(20, 0), new Translation2d(30, 0)),
-                // End 1 meters straight ahead of where we started, facing forward
-                new Pose2d(40, 0, new Rotation2d(0)),
-                kAutoTrajectoryConfigForward);
-
-        public static final Trajectory kDriveAcrossOuterLine =
-            TrajectoryGenerator.generateTrajectory(
-                // Start at the origin facing the +X direction
-                new Pose2d(0, 0, new Rotation2d(0)),
-                // Pass through these interior waypoints, helping to ensure a straight path
-                List.of(new Translation2d(1, 0)),
-                // End 1 meters straight ahead of where we started, facing forward
-                new Pose2d(2, 0, new Rotation2d(0)),
-                kAutoTrajectoryConfigForward);
-
-        public static final Trajectory kChargeStationTrajectory =
-            TrajectoryGenerator.generateTrajectory(
-                
-                new Pose2d(0, 0, new Rotation2d(0)), 
-                
-                List.of(new Translation2d(25, 0)), 
-                
-                new Pose2d(50, 0, new Rotation2d(0)),
-                kAutoTrajectoryConfigForward);
-                
-      /* public static final Trajectory kLeftTurnTrajectory =
-            TrajectoryGenerator.generateTrajectory(
-                // Start at the origin facing the +X direction
-                new Pose2d(0, 0, new Rotation2d(0)),
-                // Pass through these interior waypoints, helping to ensure a straight path
-                List.of(new Translation2d(-2.5, 2.5), new Translation2d(-5, 5), new Translation2d(-7.5, 7.5)),
-                // End 1 meters back of where we started, facing forward
-                new Pose2d(-10, -10, new Rotation2d(Math.PI/-2)),
-                kAutoTrajectoryConfig);
-     */
-/* 
-        public static final Trajectory kDriveForwardTrajectory = 
-            TrajectoryGenerator.generateTrajectory(
-            // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
-            // Pass through these interior waypoints, helping to ensure a straight path
-            List.of(new Translation2d(-5, 0)),
-            // End 1 meters straight ahead of where we started, facing forward
-            new Pose2d(-10, 0, new Rotation2d(0)),
-            kAutoTrajectoryConfig);
-
-*/
-/* 
-        public static final Trajectory kDoNothingTrajectory = TrajectoryGenerator.generateTrajectory(
-                
-        new Pose2d(0, 0, new Rotation2d(0)), 
-        
-        List.of(new Translation2d(0.5, 0)), 
-        
-        new Pose2d(1, 0, new Rotation2d(0)), 
-        kAutoTrajectoryConfigForward);
-        */
+     
    }
 }

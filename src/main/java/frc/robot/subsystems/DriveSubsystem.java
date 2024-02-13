@@ -50,6 +50,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 
     boolean isFieldOriented = true;
+    boolean released = true;
 
     // Odometry class for tracking robot pose
     SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
@@ -117,7 +118,19 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void toggleFieldOriented(boolean pressed)
     {
+       
+     
+        SmartDashboard.putBoolean("Field-Oriented", isFieldOriented);
 
+        if(pressed && released)
+        {
+            isFieldOriented = !isFieldOriented;
+            released = false;
+        }
+        if(!pressed)
+        {
+            released = true;
+        }
     
     }
 
@@ -129,7 +142,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 
 
-        drive(controllerLY, controllerLX, controllerRX, false);
+        drive(controllerLY, controllerLX, controllerRX, isFieldOriented);
     }
 
 

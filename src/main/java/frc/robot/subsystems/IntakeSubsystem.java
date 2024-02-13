@@ -9,7 +9,7 @@ public class IntakeSubsystem extends SubsystemBase {
     boolean IntakeOn = false;
     boolean wasReleased = true;
 
-    CANSparkMax IntakeController = new CANSparkMax(MechanismConstants.INTAKE_CAN_ID, MotorType.kBrushless);
+    CANSparkMax IntakeController = new CANSparkMax(MechanismConstants.INTAKE_CAN_ID, MotorType.kBrushed);
 
     public void IntakePressed() 
     {
@@ -17,7 +17,7 @@ public class IntakeSubsystem extends SubsystemBase {
         {
             if(IntakeOn == false)
             {
-                IntakeController.set(0.5);
+                IntakeController.set(-0.8);
                 IntakeOn = true;
             }
             else

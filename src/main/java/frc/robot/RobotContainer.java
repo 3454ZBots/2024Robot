@@ -27,6 +27,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -54,24 +55,7 @@ public class RobotContainer {
 
     //autonomous commands
     Command m_driveToGridCommand;
-    Command m_placeConeCommand;
-    Command m_placeCubeCommand;
-    Command m_crossMobilityCommand;
-    Command m_straightToChargeStnCommand;
-    Command m_driveLeftToChargeStnCommand;
-    Command m_driveRightToChargeStnCommand;
-    Command m_driveAcrossInnerLine;
-    Command m_driveAcrossOuterLine;
-    Command m_setXCommand;
-    Command m_doNothingCommand;
-    Command m_leftTurnCommand;
-    Command m_chargeStationCommand;
-    Command ArmCmd;
-    SequentialCommandGroup m_approachAndPlaceCone;
-    SequentialCommandGroup m_approachAndPlaceCube;
-    SequentialCommandGroup m_turnRightToChargeStation;
-    SequentialCommandGroup m_turnLeftToChargeStation;
-
+ 
     AnalogInput analog;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -91,6 +75,7 @@ public class RobotContainer {
         each subsystem can have one default command, this command is called repeatedly
         useful for things that take joystick input or checking sensors 
         */
+        /* 
         m_robotDrive.setDefaultCommand(
             // The left stick controls translation of the robot.
             // Turning is controlled by the X axis of the right stick.
@@ -101,8 +86,10 @@ public class RobotContainer {
                     m_driverController.getLeftY(),
                     m_driverController.getLeftX(),
                     m_driverController.getRightX(),
-                    true),
+                    false),
                 m_robotDrive));
+        */
+        m_robotDrive.setDefaultCommand(new RunCommand(() -> m_robotDrive.drivePeriodic(m_driverController.getLeftY(), m_driverController.getLeftX(), m_driverController.getRightX()), m_robotDrive));
         
         m_robotVision.setDefaultCommand(new RunCommand(() -> m_robotVision.visionPeriodic(), m_robotVision));
         
@@ -138,7 +125,7 @@ public class RobotContainer {
         //first phase commands
         
 
-/*
+
         m_driveToGridCommand = new SwerveControllerCommand(
             AutoTrajectoryConstants.kDriveToGridTrajectory,
             m_robotDrive::getPose, // Functional interface to feed supplier
@@ -150,77 +137,12 @@ public class RobotContainer {
             thetaController,
             m_robotDrive::setModuleStates,
             m_robotDrive);
-        
-        m_driveAcrossInnerLine = new SwerveControllerCommand(
-            AutoTrajectoryConstants.kDriveAcrossInnerLine,
-            m_robotDrive::getPose, // Functional interface to feed supplier
-            SwerveDriveConstants.kDriveKinematics,
-    
-            // Position controllers
-            new PIDController(AutoDriveConstants.kPXController, 0, 0),
-            new PIDController(AutoDriveConstants.kPYController, 0, 0),
-            thetaController,
-            m_robotDrive::setModuleStates,
-            m_robotDrive);
-
-        m_driveAcrossOuterLine = new SwerveControllerCommand(
-            AutoTrajectoryConstants.kDriveAcrossOuterLine,
-            m_robotDrive::getPose, // Functional interface to feed supplier
-            SwerveDriveConstants.kDriveKinematics,
-        
-            // Position controllers
-            new PIDController(AutoDriveConstants.kPXController, 0, 0),
-            new PIDController(AutoDriveConstants.kPYController, 0, 0),
-            thetaController,
-            m_robotDrive::setModuleStates,
-            m_robotDrive);
-            */
- /* 
-        m_leftTurnCommand = new SwerveControllerCommand(
-                AutoTrajectoryConstants.kDriveForwardTrajectory,
-                m_robotDrive::getPose, // Functional interface to feed supplier
-                SwerveDriveConstants.kDriveKinematics,
-    
-                // Position controllers
-                new PIDController(AutoDriveConstants.kPXController, 0, 0),
-                new PIDController(AutoDriveConstants.kPYController, 0, 0),
-                thetaController,
-                m_robotDrive::setModuleStates,
-                m_robotDrive);
-*/
-/* 
-        m_doNothingCommand = new SwerveControllerCommand(
-            AutoTrajectoryConstants.kDoNothingTrajectory,
-            m_robotDrive::getPose, // Functional interface to feed supplier
-            SwerveDriveConstants.kDriveKinematics,            
-            // Position controllers
-            new PIDController(AutoDriveConstants.kPXController, 0, 0),
-            new PIDController(AutoDriveConstants.kPYController, 0, 0),
-            thetaController,
-            m_robotDrive::setModuleStates,
-            m_robotDrive);
-
-        m_chargeStationCommand = new SwerveControllerCommand(
-            AutoTrajectoryConstants.kChargeStationTrajectory,
-            m_robotDrive::getPose, // Functional interface to feed supplier
-            SwerveDriveConstants.kDriveKinematics,            
-            // Position controllers
-            new PIDController(AutoDriveConstants.kPXController, 0, 0),
-            new PIDController(AutoDriveConstants.kPYController, 0, 0),
-            thetaController,
-            m_robotDrive::setModuleStates,
-            m_robotDrive);
-            */
-
-/* 
-        m_approachAndPlaceCone = new SequentialCommandGroup(m_driveToGridCommand);
-        m_approachAndPlaceCone.addCommands(m_placeConeCommand, m_returnToStartCommand);    
-*/
-    //    m_approachAndPlaceCube = new SequentialCommandGroup(m_driveToGridCommand);
- //       m_approachAndPlaceCube.addCommands(m_leftTurnCommand);
+       
 
 
-        //second phase commands
+        Field2d m_field = new Field2d();
+        SmartDashboard.putData("Field", m_field);
+        m_field.getObject("traj").setTrajectory(AutoTrajectoryConstants.kDriveToGridTrajectory);
         
     }
 
@@ -232,7 +154,7 @@ public class RobotContainer {
         //Set options for choosing various flavors of autonomous
 
         //in the first phase, we drive towards the grid and either place a game piece or continue on
-    
+    /*
         m_firstPhaseChooser.addOption(SmartDashboardConstants.kDepositCube, m_driveToGridCommand);
         m_firstPhaseChooser.addOption(SmartDashboardConstants.kDoNotDeposit, m_doNothingCommand);
 
@@ -248,7 +170,7 @@ public class RobotContainer {
         //send to SmartDashboard
         SmartDashboard.putData("Scoring: ", m_firstPhaseChooser);
         SmartDashboard.putData("Moving: ", m_secondPhaseChooser);
-        
+    */  
         
         
     }
@@ -275,9 +197,17 @@ public class RobotContainer {
 
         SequentialCommandGroup finalAutoCommand = new SequentialCommandGroup();
 
-        Command phaseOne = m_driveAcrossOuterLine;
+        Command phaseOne = m_driveToGridCommand;
         if (phaseOne != null){
-            finalAutoCommand.addCommands(phaseOne);
+            try 
+            {
+                finalAutoCommand.addCommands(phaseOne);
+            }
+            catch(Exception e)
+            {
+                //System.out.println(e.getMessage());
+            }
+           
         }
         
     /*  Command placeHolderCommand = new WaitCommand(1.0);

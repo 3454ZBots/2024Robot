@@ -38,7 +38,7 @@ public class TrajectoryVisualizer extends TimedRobot {
         SmartDashboard.putData("Field", m_field);
        
 
-      //  m_field.getObject("traj").setTrajectory(AutoTrajectoryConstants.kDriveAcrossOuterLine);
+        m_field.getObject("traj").setTrajectory(AutoTrajectoryConstants.kDriveToGridTrajectory);
         //m_field.setRobotPose(robotPose);
     }
 }

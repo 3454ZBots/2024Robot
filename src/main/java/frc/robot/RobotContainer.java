@@ -6,9 +6,9 @@ import frc.robot.constants.AutoConstants.AutoTrajectoryConstants;
 import frc.robot.constants.BasicConstants.ControllerConstants;
 import frc.robot.constants.BasicConstants.SmartDashboardConstants;
 import frc.robot.constants.SwerveConstants.SwerveDriveConstants;
-
+import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShootingSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 import java.util.List;
@@ -43,11 +43,12 @@ public class RobotContainer {
 
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
     private final VisionSubsystem m_robotVision = new VisionSubsystem(m_robotDrive);
-    private final IntakeSubsystem m_robotIntake = new IntakeSubsystem();
+    private final ShootingSubsystem m_robotShooting = new ShootingSubsystem();
+    private final ClimbSubsystem m_robotClimbing = new ClimbSubsystem();
 
     // The driver's controller
     CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVE_REMOTE_PORT);
-    //CommandXboxController m_mechanismController = new CommandXboxController(ControllerConstants.MECHANISM_REMOTE_PORT);
+    CommandXboxController m_mechanismController = new CommandXboxController(ControllerConstants.MECHANISM_REMOTE_PORT);
 
     //smart dashboard components
     SendableChooser<Command> m_secondPhaseChooser;
@@ -92,6 +93,7 @@ public class RobotContainer {
         m_robotDrive.setDefaultCommand(new RunCommand(() -> m_robotDrive.drivePeriodic(m_driverController.getLeftY(), m_driverController.getLeftX(), m_driverController.getRightX()), m_robotDrive));
         
         m_robotVision.setDefaultCommand(new RunCommand(() -> m_robotVision.visionPeriodic(), m_robotVision));
+        m_robotShooting.setDefaultCommand(new RunCommand(() -> m_robotShooting.shootingPeriodic(), m_robotShooting));
         
       
        
@@ -101,15 +103,21 @@ public class RobotContainer {
      * Used to define your button->command mappings with {@link m_driverController}.
      */
     private void configureButtonBindings() {
-        m_driverController.b().onTrue(Commands.runOnce(() -> m_robotIntake.IntakePressed()));
-        m_driverController.b().onFalse(Commands.runOnce(() -> m_robotIntake.IntakeReleased()));
 
         m_driverController.rightBumper().onTrue(Commands.runOnce(() -> m_robotDrive.toggleFieldOriented(true)));
         m_driverController.rightBumper().onFalse(Commands.runOnce(() -> m_robotDrive.toggleFieldOriented(false)));
 
+        m_mechanismController.a().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleShooting()));
+        m_mechanismController.b().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleMidtakeAndIntake()));
+        m_mechanismController.y().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleMidtake()));
+
+        m_driverController.povUp().onTrue(Commands.runOnce(() -> m_robotClimbing.reachUp()));
+        m_driverController.povDown().onTrue(Commands.runOnce(() -> m_robotClimbing.pullDown()));
+        m_driverController.povCenter().onTrue(Commands.runOnce(() -> m_robotClimbing.turnOffMotors()));
+
      //   m_driverController.x().onTrue(Commands.runOnce(() -> m_robotVision.beginOrienting()));
      //   m_driverController.a().onTrue(Commands.runOnce(() -> m_robotVision.stopOrienting()));
-        m_driverController.y().onTrue(Commands.runOnce(() -> m_robotDrive.setX()));
+      //  m_driverController.y().onTrue(Commands.runOnce(() -> m_robotDrive.setX()));
     }
 
     /*

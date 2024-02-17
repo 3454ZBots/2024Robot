@@ -8,6 +8,10 @@ public class ClimbSubsystem extends SubsystemBase
 {   
     Spark leftClimber = new Spark(MechanismConstants.LEFT_CLIMBER_PORT);
     Spark rightClimber = new Spark(MechanismConstants.RIGHT_CLIMBER_PORT);
+
+    public ClimbSubsystem() { 
+        turnOffMotors();
+    }
     
     public void turnOffMotors() {
         leftClimber.set(0);

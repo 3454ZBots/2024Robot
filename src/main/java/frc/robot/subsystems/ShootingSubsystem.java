@@ -25,19 +25,34 @@ public class ShootingSubsystem extends SubsystemBase {
             IntakeController.set(0);
             MidtakeController.set(0);
         }
-        SmartDashboard.putBoolean("shooting on", ShootingControllerRight.get() > 0);
+        double shootSpeed = ShootingControllerRight.get();
+        SmartDashboard.putBoolean("shooting on", shootSpeed > 0);
+        boolean shooterAtAmpSpeed = shootSpeed == MechanismConstants.SHOOTING_SPEED_AMP;
+        boolean shooterAtSpeakerSpeed = shootSpeed == MechanismConstants.SHOOTING_SPEED_SPEAKER;
+        SmartDashboard.putBoolean("at amp speed", shooterAtAmpSpeed);
+        SmartDashboard.putBoolean("at speaker speed", shooterAtSpeakerSpeed);
         SmartDashboard.putBoolean("midtake on", MidtakeController.get() > 0);
         SmartDashboard.putBoolean("intake on", IntakeController.get() > 0);
         SmartDashboard.putBoolean("sensor on", opticalSensor.get());
     }
 
-    public void toggleShooting() {
+    public void toggleShootingAmp() {
         if (ShootingControllerRight.get() > 0) {
             ShootingControllerRight.set(0);
             ShootingControllerLeft.set(0);
         } else {
-            ShootingControllerRight.set(MechanismConstants.SHOOTING_SPEED);
-            ShootingControllerLeft.set(MechanismConstants.SHOOTING_SPEED);
+            ShootingControllerRight.set(MechanismConstants.SHOOTING_SPEED_AMP);
+            ShootingControllerLeft.set(MechanismConstants.SHOOTING_SPEED_AMP);
+        }
+    }
+
+    public void toggleShootingSpeaker() {
+        if (ShootingControllerRight.get() > 0) {
+            ShootingControllerRight.set(0);
+            ShootingControllerLeft.set(0);
+        } else {
+            ShootingControllerRight.set(MechanismConstants.SHOOTING_SPEED_SPEAKER);
+            ShootingControllerLeft.set(MechanismConstants.SHOOTING_SPEED_SPEAKER);
         }
     }
 

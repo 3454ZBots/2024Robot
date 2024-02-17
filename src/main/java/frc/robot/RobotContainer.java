@@ -103,12 +103,12 @@ public class RobotContainer {
      * Used to define your button->command mappings with {@link m_driverController}.
      */
     private void configureButtonBindings() {
-
         m_driverController.rightBumper().onTrue(Commands.runOnce(() -> m_robotDrive.toggleFieldOriented(true)));
         m_driverController.rightBumper().onFalse(Commands.runOnce(() -> m_robotDrive.toggleFieldOriented(false)));
 
-        m_mechanismController.a().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleShooting()));
-        m_mechanismController.b().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleMidtakeAndIntake()));
+        m_mechanismController.a().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleShootingAmp()));
+        m_mechanismController.b().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleShootingSpeaker()));
+        m_mechanismController.x().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleMidtakeAndIntake()));
         m_mechanismController.y().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleMidtake()));
 
         m_driverController.povUp().onTrue(Commands.runOnce(() -> m_robotClimbing.reachUp()));

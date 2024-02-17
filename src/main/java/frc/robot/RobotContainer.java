@@ -94,7 +94,7 @@ public class RobotContainer {
         
         m_robotVision.setDefaultCommand(new RunCommand(() -> m_robotVision.visionPeriodic(), m_robotVision));
         m_robotShooting.setDefaultCommand(new RunCommand(() -> m_robotShooting.shootingPeriodic(), m_robotShooting));
-        
+        //m_robotClimbing.setDefaultCommand(new RunCommand(() -> m_robotClimbing.turnOffMotors(), m_robotClimbing));
       
        
     }
@@ -111,9 +111,16 @@ public class RobotContainer {
         m_mechanismController.x().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleMidtakeAndIntake()));
         m_mechanismController.y().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleMidtake()));
 
-        m_driverController.povUp().onTrue(Commands.runOnce(() -> m_robotClimbing.reachUp()));
-        m_driverController.povDown().onTrue(Commands.runOnce(() -> m_robotClimbing.pullDown()));
-        m_driverController.povCenter().onTrue(Commands.runOnce(() -> m_robotClimbing.turnOffMotors()));
+       // m_driverController.povUp().onTrue(Commands.runOnce(() -> m_robotClimbing.reachUp()));
+       // m_driverController.povDown().onTrue(Commands.runOnce(() -> m_robotClimbing.pullDown()));
+       // m_driverController.povCenter().onTrue(Commands.runOnce(() -> m_robotClimbing.turnOffMotors()));
+
+        m_mechanismController.rightBumper().onTrue(Commands.runOnce(() -> m_robotClimbing.RightUp()));
+        m_mechanismController.leftBumper().onTrue(Commands.runOnce(() -> m_robotClimbing.leftUp()));
+        m_mechanismController.rightTrigger().onTrue(Commands.runOnce(() -> m_robotClimbing.RightDown()));
+        m_mechanismController.leftTrigger().onTrue(Commands.runOnce(() -> m_robotClimbing.leftDown()));
+        m_mechanismController.leftBumper().negate().and(m_mechanismController.leftTrigger().negate()).onTrue(Commands.runOnce(() -> m_robotClimbing.leftOff()));
+        m_mechanismController.rightBumper().negate().and(m_mechanismController.rightTrigger().negate()).onTrue(Commands.runOnce(() -> m_robotClimbing.rightOff()));
 
      //   m_driverController.x().onTrue(Commands.runOnce(() -> m_robotVision.beginOrienting()));
      //   m_driverController.a().onTrue(Commands.runOnce(() -> m_robotVision.stopOrienting()));

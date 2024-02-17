@@ -28,4 +28,34 @@ public class ClimbSubsystem extends SubsystemBase
         rightClimber.set(MechanismConstants.UP_CLIMB_SPEED);
     }
 
+    public void leftDown()
+    {
+        leftClimber.set(MechanismConstants.DOWN_CLIMB_SPEED);
+    }
+
+    public void leftUp()
+    {
+        leftClimber.set(MechanismConstants.UP_CLIMB_SPEED);
+    }
+
+    public void RightDown()
+    {
+        rightClimber.set(MechanismConstants.DOWN_CLIMB_SPEED);
+    }
+
+    public void RightUp()
+    {
+        rightClimber.set(MechanismConstants.UP_CLIMB_SPEED);
+    }
+
+    public void leftOff()
+    {
+        leftClimber.set(0);
+    }   
+
+    public void rightOff()
+    {
+        rightClimber.set(0);
+    }
+
 }

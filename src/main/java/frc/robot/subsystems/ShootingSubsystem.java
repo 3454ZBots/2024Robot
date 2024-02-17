@@ -21,19 +21,21 @@ public class ShootingSubsystem extends SubsystemBase {
     DigitalInput opticalSensor = new DigitalInput(MechanismConstants.SENSOR_DIO_PORT);
 
     public void shootingPeriodic() {
-        if(opticalSensor.get() == true) { // was tripped
+/* 
+        if(opticalSensor.get() == false && IntakeController.get() != 0) { // was tripped
             IntakeController.set(0);
             MidtakeController.set(0);
         }
+     */
         double shootSpeed = ShootingControllerRight.get();
-        SmartDashboard.putBoolean("shooting on", shootSpeed > 0);
+        SmartDashboard.putBoolean("shooting on", shootSpeed != 0);
         boolean shooterAtAmpSpeed = shootSpeed == MechanismConstants.SHOOTING_SPEED_AMP;
         boolean shooterAtSpeakerSpeed = shootSpeed == MechanismConstants.SHOOTING_SPEED_SPEAKER;
         SmartDashboard.putBoolean("at amp speed", shooterAtAmpSpeed);
         SmartDashboard.putBoolean("at speaker speed", shooterAtSpeakerSpeed);
-        SmartDashboard.putBoolean("midtake on", MidtakeController.get() > 0);
-        SmartDashboard.putBoolean("intake on", IntakeController.get() > 0);
-        SmartDashboard.putBoolean("sensor on", opticalSensor.get());
+        SmartDashboard.putBoolean("midtake on", MidtakeController.get() != 0);
+        SmartDashboard.putBoolean("intake on", IntakeController.get() != 0);
+        SmartDashboard.putBoolean("sensor on", !opticalSensor.get());
     }
 
     public void toggleShootingAmp() {
@@ -42,7 +44,7 @@ public class ShootingSubsystem extends SubsystemBase {
             ShootingControllerLeft.set(0);
         } else {
             ShootingControllerRight.set(MechanismConstants.SHOOTING_SPEED_AMP);
-            ShootingControllerLeft.set(MechanismConstants.SHOOTING_SPEED_AMP);
+            ShootingControllerLeft.set(MechanismConstants.SHOOTING_SPEED_AMP * -1);
         }
     }
 
@@ -52,12 +54,12 @@ public class ShootingSubsystem extends SubsystemBase {
             ShootingControllerLeft.set(0);
         } else {
             ShootingControllerRight.set(MechanismConstants.SHOOTING_SPEED_SPEAKER);
-            ShootingControllerLeft.set(MechanismConstants.SHOOTING_SPEED_SPEAKER);
+            ShootingControllerLeft.set(MechanismConstants.SHOOTING_SPEED_SPEAKER * -1);
         }
     }
 
     public void toggleMidtake() {
-        if (MidtakeController.get() > 0) {
+        if (MidtakeController.get() != 0) {
             MidtakeController.set(0);
         } else {
             MidtakeController.set(MechanismConstants.MIDTAKE_SPEED);
@@ -65,7 +67,7 @@ public class ShootingSubsystem extends SubsystemBase {
     }
 
     public void toggleMidtakeAndIntake() {
-        if(IntakeController.get() > 0) {
+        if(IntakeController.get() != 0) {
             IntakeController.set(0);
             MidtakeController.set(0);
         } else {

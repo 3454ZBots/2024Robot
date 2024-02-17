@@ -54,6 +54,7 @@ public class VisionSubsystem extends SubsystemBase {
         botyaw = botpose.getDoubleArray(new double[6])[5];
 
         //post to smart dashboard periodically
+        /*
         SmartDashboard.putNumber("tx", tX);
         SmartDashboard.putNumber("ty", tY);
         SmartDashboard.putNumber("LimelightArea (ta)", limeArea);
@@ -67,6 +68,7 @@ public class VisionSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("botpitch", botpitch);
         SmartDashboard.putNumber("botroll", botroll);
         SmartDashboard.putNumber("botyaw", botyaw);
+        */
 
         if(isorienting)
         {

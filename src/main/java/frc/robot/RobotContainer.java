@@ -103,24 +103,33 @@ public class RobotContainer {
      * Used to define your button->command mappings with {@link m_driverController}.
      */
     private void configureButtonBindings() {
+        //Driver Commands
         m_driverController.rightBumper().onTrue(Commands.runOnce(() -> m_robotDrive.toggleFieldOriented(true)));
         m_driverController.rightBumper().onFalse(Commands.runOnce(() -> m_robotDrive.toggleFieldOriented(false)));
+
+
+        //Shooting Commands
 
         m_mechanismController.a().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleShootingAmp()));
         m_mechanismController.b().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleShootingSpeaker()));
         m_mechanismController.x().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleMidtakeAndIntake()));
         m_mechanismController.y().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleMidtake()));
-
+        m_mechanismController.povCenter().negate().onTrue(Commands.runOnce(() -> m_robotShooting.spit()));
+        m_mechanismController.povCenter().onTrue(Commands.runOnce(() -> m_robotShooting.stopSpit()));
        // m_driverController.povUp().onTrue(Commands.runOnce(() -> m_robotClimbing.reachUp()));
        // m_driverController.povDown().onTrue(Commands.runOnce(() -> m_robotClimbing.pullDown()));
        // m_driverController.povCenter().onTrue(Commands.runOnce(() -> m_robotClimbing.turnOffMotors()));
 
+
+       //Climbing Commands
         m_mechanismController.rightBumper().onTrue(Commands.runOnce(() -> m_robotClimbing.RightUp()));
         m_mechanismController.leftBumper().onTrue(Commands.runOnce(() -> m_robotClimbing.leftUp()));
         m_mechanismController.rightTrigger().onTrue(Commands.runOnce(() -> m_robotClimbing.RightDown()));
         m_mechanismController.leftTrigger().onTrue(Commands.runOnce(() -> m_robotClimbing.leftDown()));
         m_mechanismController.leftBumper().negate().and(m_mechanismController.leftTrigger().negate()).onTrue(Commands.runOnce(() -> m_robotClimbing.leftOff()));
         m_mechanismController.rightBumper().negate().and(m_mechanismController.rightTrigger().negate()).onTrue(Commands.runOnce(() -> m_robotClimbing.rightOff()));
+
+
 
      //   m_driverController.x().onTrue(Commands.runOnce(() -> m_robotVision.beginOrienting()));
      //   m_driverController.a().onTrue(Commands.runOnce(() -> m_robotVision.stopOrienting()));
@@ -209,11 +218,24 @@ public class RobotContainer {
 
       //  m_robotDrive.resetOdometry(AutoTrajectoryConstants.kLeftTurnTrajectory.getInitialPose());
 
+        //Command phaseOne = m_driveToGridCommand;
+        
+
 
         SequentialCommandGroup finalAutoCommand = new SequentialCommandGroup();
 
-        Command phaseOne = m_driveToGridCommand;
-        if (phaseOne != null){
+        SequentialCommandGroup phaseOne = new SequentialCommandGroup(
+        Commands.runOnce(() -> m_robotShooting.toggleShootingSpeaker()), 
+        Commands.waitSeconds(1), 
+        Commands.runOnce(() -> m_robotShooting.toggleMidtake()), 
+        Commands.waitSeconds(1), 
+        Commands.runOnce(() -> m_robotShooting.toggleShootingSpeaker()), 
+        Commands.runOnce(() -> m_robotShooting.toggleMidtake())
+        );
+
+        Command phaseTwo = m_driveToGridCommand;
+
+        if (phaseOne != null) {
             try 
             {
                 finalAutoCommand.addCommands(phaseOne);
@@ -222,8 +244,29 @@ public class RobotContainer {
             {
                 //System.out.println(e.getMessage());
             }
-           
         }
+
+        if (phaseTwo != null) {
+            try 
+            {
+                //finalAutoCommand.addCommands(phaseTwo);
+            }
+            catch(Exception e)
+            {
+                //System.out.println(e.getMessage());
+            }
+        }
+
+
+
+
+    /*     toggleShootingSpeaker();
+            Thread.sleep(2000);
+                toggleMidtake();
+            Thread.sleep(1000);
+                toggleShootingSpeaker();
+                toggleMidtake();
+            */
         
     /*  Command placeHolderCommand = new WaitCommand(1.0);
        //   finalAutoCommand.addCommands(placeHolderCommand);

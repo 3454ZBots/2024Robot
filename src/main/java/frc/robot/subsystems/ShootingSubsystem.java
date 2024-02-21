@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
@@ -21,12 +22,12 @@ public class ShootingSubsystem extends SubsystemBase {
     DigitalInput opticalSensor = new DigitalInput(MechanismConstants.SENSOR_DIO_PORT);
 
     public void shootingPeriodic() {
-/* 
-        if(opticalSensor.get() == false && IntakeController.get() != 0) { // was tripped
+ 
+        if(opticalSensor.get() == false && IntakeController.get() > 0) { // was tripped
             IntakeController.set(0);
             MidtakeController.set(0);
         }
-     */
+    
         double shootSpeed = ShootingControllerRight.get();
         SmartDashboard.putBoolean("shooting on", shootSpeed != 0);
         boolean shooterAtAmpSpeed = shootSpeed == MechanismConstants.SHOOTING_SPEED_AMP;
@@ -74,5 +75,23 @@ public class ShootingSubsystem extends SubsystemBase {
             IntakeController.set(MechanismConstants.INTAKE_SPEED);
             MidtakeController.set(MechanismConstants.MIDTAKE_SPEED);
         }
+
     }
+
+    public void spit()
+    {
+        IntakeController.set(MechanismConstants.INTAKE_SPEED * -1);
+    }
+
+    public void stopSpit()
+    {
+        if(IntakeController.get() == MechanismConstants.INTAKE_SPEED * -1)
+        {
+            IntakeController.set(0);
+        }
+    }
+
+    
 }
+
+

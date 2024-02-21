@@ -79,6 +79,8 @@ public class DriveSubsystem extends SubsystemBase {
                 m_rearLeft.getPosition(),
                 m_rearRight.getPosition()
             });
+            m_PoseEstimator.update(Rotation2d.fromDegrees(m_gyro.getAngle() * -1), getModulePositions());
+            m_field.setRobotPose(m_PoseEstimator.getEstimatedPosition());
     
   }
 

@@ -23,7 +23,7 @@ public class ShootingSubsystem extends SubsystemBase {
 
     public void shootingPeriodic() {
  
-        if(opticalSensor.get() == false && IntakeController.get() > 0) { // was tripped
+        if(opticalSensor.get() == false && IntakeController.get() == MechanismConstants.INTAKE_SPEED) { // was tripped
             IntakeController.set(0);
             MidtakeController.set(0);
         }

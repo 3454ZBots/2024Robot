@@ -224,6 +224,7 @@ public class RobotContainer {
 
         SequentialCommandGroup finalAutoCommand = new SequentialCommandGroup();
 
+        
         SequentialCommandGroup phaseOne = new SequentialCommandGroup(
         Commands.runOnce(() -> m_robotShooting.toggleShootingSpeaker()), 
         Commands.waitSeconds(1), 
@@ -232,6 +233,9 @@ public class RobotContainer {
         Commands.runOnce(() -> m_robotShooting.toggleShootingSpeaker()), 
         Commands.runOnce(() -> m_robotShooting.toggleMidtake())
         );
+        
+
+      
 
         Command phaseTwo = m_driveToGridCommand;
 

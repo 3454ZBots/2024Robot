@@ -186,7 +186,7 @@ public class DriveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("IMU Heading:", getHeading());
         SmartDashboard.putNumber("IMU Turn Rate", getTurnRate());
 
-        // to do - replace radions:60 with new getHeading
+        
         SwerveModuleState[] swerveModuleStates = SwerveDriveConstants.kDriveKinematics.toSwerveModuleStates(
             fieldRelative ? 
             ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(getHeading())) : 

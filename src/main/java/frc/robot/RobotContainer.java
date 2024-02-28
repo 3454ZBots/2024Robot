@@ -107,7 +107,6 @@ public class RobotContainer {
         m_driverController.rightBumper().onTrue(Commands.runOnce(() -> m_robotDrive.toggleFieldOriented(true)));
         m_driverController.rightBumper().onFalse(Commands.runOnce(() -> m_robotDrive.toggleFieldOriented(false)));
 
-
         //Shooting Commands
 
         m_mechanismController.a().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleShootingAmp()));

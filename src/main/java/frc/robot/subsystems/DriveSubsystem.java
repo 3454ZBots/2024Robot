@@ -138,13 +138,8 @@ public class DriveSubsystem extends SubsystemBase {
 
 
     public void drivePeriodic(double controllerLY, double controllerLX, double controllerRX)
-    {
-
-
-
-
-
-        drive(controllerLY, controllerLX, controllerRX, isFieldOriented);
+    {  
+            drive(controllerLY, controllerLX, controllerRX, isFieldOriented);
     }
 
 

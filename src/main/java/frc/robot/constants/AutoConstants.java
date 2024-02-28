@@ -33,7 +33,7 @@ public final class AutoConstants {
         public static final double kPThetaController = 1;
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-            new TrapezoidProfile.Constraints( kMaxAngularSpeedRadiansPerSecond,
+            new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond,
             kMaxAngularSpeedRadiansPerSecondSquared);
     }
 

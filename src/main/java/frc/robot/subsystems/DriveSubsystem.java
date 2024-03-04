@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 import javax.xml.datatype.DatatypeConstants.Field;
 
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -11,6 +12,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -52,27 +55,30 @@ public class DriveSubsystem extends SubsystemBase {
     boolean isFieldOriented = true;
     boolean released = true;
 
+    StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
+
     // Odometry class for tracking robot pose
     SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
         SwerveDriveConstants.kDriveKinematics,
-        Rotation2d.fromDegrees(getHeading()),
+        getHeading(),
         getModulePositions());
 
         SwerveDrivePoseEstimator m_PoseEstimator;
     /** Creates a new DriveSubsystem. */
     public DriveSubsystem() {
         m_gyro.setYaw(0);
-        m_PoseEstimator = new SwerveDrivePoseEstimator(SwerveDriveConstants.kDriveKinematics,Rotation2d.fromDegrees(m_gyro.getAngle() * -1), getModulePositions(), getPose());
-
+        m_PoseEstimator = new SwerveDrivePoseEstimator(SwerveDriveConstants.kDriveKinematics, Rotation2d.fromDegrees(m_gyro.getAngle() * -1), getModulePositions(), getPose());
+        
         SmartDashboard.putData("field pose", m_field);
     }
 
      
     @Override
-    public void periodic() {
+    public void periodic() 
+    {
         // Update the odometry in the periodic block
             m_odometry.update(
-            Rotation2d.fromDegrees(getHeading()),
+            getHeading(),
             new SwerveModulePosition[] {
                 m_frontLeft.getPosition(),
                 m_frontRight.getPosition(),
@@ -81,14 +87,32 @@ public class DriveSubsystem extends SubsystemBase {
             });
             m_PoseEstimator.update(Rotation2d.fromDegrees(m_gyro.getAngle() * -1), getModulePositions());
             m_field.setRobotPose(m_PoseEstimator.getEstimatedPosition());
+
+
+            SwerveModuleState[] states = new SwerveModuleState[]
+            {
+                m_frontLeft.getState(),
+                m_frontRight.getState(),
+                m_rearLeft.getState(),
+                m_rearRight.getState()
+            };
+            
+            SmartDashboard.putNumber("FL Distance", m_frontLeft.getPosition().distanceMeters);
+            SmartDashboard.putNumber("FR Distance", m_frontRight.getPosition().distanceMeters);
+            SmartDashboard.putNumber("RL Distance", m_rearLeft.getPosition().distanceMeters);
+            SmartDashboard.putNumber("RR Distance", m_rearRight.getPosition().distanceMeters);
+            
+
+        publisher.set(states);
+
     
-  }
+    }
 
     @Override
     public void simulationPeriodic ()
     {
         m_PoseEstimator.update(Rotation2d.fromDegrees(m_gyro.getAngle() * -1), getModulePositions());
-        m_field.setRobotPose(m_PoseEstimator.getEstimatedPosition());
+        m_field.setRobotPose(getPose());
 
     }
     /**
@@ -108,7 +132,7 @@ public class DriveSubsystem extends SubsystemBase {
     
     public void resetOdometry(Pose2d pose) {
         m_odometry.resetPosition(
-            Rotation2d.fromDegrees(getHeading()),
+            getHeading(),
             new SwerveModulePosition[] {
                 m_frontLeft.getPosition(),
                 m_frontRight.getPosition(),
@@ -178,13 +202,13 @@ public class DriveSubsystem extends SubsystemBase {
         rot *= SwerveDriveConstants.kMaxAngularSpeed;
 
         SmartDashboard.putNumber("Rot", rot);
-        SmartDashboard.putNumber("IMU Heading:", getHeading());
+        SmartDashboard.putNumber("IMU Heading:", getHeading().getDegrees());
         SmartDashboard.putNumber("IMU Turn Rate", getTurnRate());
 
         
         SwerveModuleState[] swerveModuleStates = SwerveDriveConstants.kDriveKinematics.toSwerveModuleStates(
             fieldRelative ? 
-            ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(getHeading())) : 
+            ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getHeading()) : 
             new ChassisSpeeds(xSpeed, ySpeed, rot));
 
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, SwerveDriveConstants.kMaxSpeedMetersPerSecond);
@@ -241,8 +265,8 @@ public class DriveSubsystem extends SubsystemBase {
      */
 
      
-    public double getHeading() {
-        return Rotation2d.fromDegrees(m_gyro.getAngle() * -1).getDegrees();
+    public Rotation2d getHeading() {
+        return m_gyro.getRotation2d();
     }
 
 
@@ -266,6 +290,15 @@ public class DriveSubsystem extends SubsystemBase {
                 m_rearLeft.getPosition(),
                 m_rearRight.getPosition()
         };
+    }
+
+
+    public void driveDistance(double dist)
+    {
+        m_frontLeft.encoderDrive(dist);
+        m_frontRight.encoderDrive(dist);
+        m_rearLeft.encoderDrive(dist);
+        m_rearRight.encoderDrive(dist);
     }
     
     //Commands we added

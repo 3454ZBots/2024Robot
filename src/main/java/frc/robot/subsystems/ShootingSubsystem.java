@@ -4,8 +4,12 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+
+import frc.robot.RobotContainer;
 import frc.robot.constants.MechanismConstants;
 
 public class ShootingSubsystem extends SubsystemBase {
@@ -18,15 +22,36 @@ public class ShootingSubsystem extends SubsystemBase {
     boolean IntakeOn = false;
     boolean wasReleased = true;
     boolean shootingOn = false;
+    CommandXboxController rumbleController;
+    int rumbleCounter = 0;
 
     DigitalInput opticalSensor = new DigitalInput(MechanismConstants.SENSOR_DIO_PORT);
+
+    public ShootingSubsystem(CommandXboxController Controller)
+    {
+        rumbleController = Controller;
+    }
 
     public void shootingPeriodic() {
  
         if(opticalSensor.get() == false && IntakeController.get() == MechanismConstants.INTAKE_SPEED) { // was tripped
             IntakeController.set(0);
             MidtakeController.set(0);
+            rumbleController.getHID().setRumble(RumbleType.kBothRumble, 1);
+            rumbleCounter = 1;
         }
+
+
+        if(rumbleCounter == 75)
+        {
+            rumbleController.getHID().setRumble(RumbleType.kBothRumble, 0);
+            rumbleCounter = 0;
+        }
+        else if(rumbleCounter > 0)
+        {
+            rumbleCounter += 1;
+        }
+        
     
         double shootSpeed = ShootingControllerRight.get();
         SmartDashboard.putBoolean("shooting on", shootSpeed != 0);

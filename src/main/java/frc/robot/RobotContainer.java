@@ -27,6 +27,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,14 +42,16 @@ import frc.robot.constants.BasicConstants.Misc;
 
 public class RobotContainer {
 
-    private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-    private final VisionSubsystem m_robotVision = new VisionSubsystem(m_robotDrive);
-    private final ShootingSubsystem m_robotShooting = new ShootingSubsystem();
-    private final ClimbSubsystem m_robotClimbing = new ClimbSubsystem();
-
     // The driver's controller
     CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVE_REMOTE_PORT);
     CommandXboxController m_mechanismController = new CommandXboxController(ControllerConstants.MECHANISM_REMOTE_PORT);
+
+    private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+    private final VisionSubsystem m_robotVision = new VisionSubsystem(m_robotDrive);
+    private final ShootingSubsystem m_robotShooting = new ShootingSubsystem(m_mechanismController);
+    private final ClimbSubsystem m_robotClimbing = new ClimbSubsystem();
+
+    
 
     //smart dashboard components
     SendableChooser<Command> m_secondPhaseChooser;
@@ -128,6 +131,7 @@ public class RobotContainer {
         m_mechanismController.leftBumper().negate().and(m_mechanismController.leftTrigger().negate()).onTrue(Commands.runOnce(() -> m_robotClimbing.leftOff()));
         m_mechanismController.rightBumper().negate().and(m_mechanismController.rightTrigger().negate()).onTrue(Commands.runOnce(() -> m_robotClimbing.rightOff()));
 
+        m_driverController.a().onTrue(Commands.runOnce(() -> m_robotDrive.driveDistance(1)));
 
 
      //   m_driverController.x().onTrue(Commands.runOnce(() -> m_robotVision.beginOrienting()));
@@ -241,7 +245,7 @@ public class RobotContainer {
         if (phaseOne != null) {
             try 
             {
-                finalAutoCommand.addCommands(phaseOne);
+                //finalAutoCommand.addCommands(phaseOne);
             }
             catch(Exception e)
             {
@@ -252,7 +256,7 @@ public class RobotContainer {
         if (phaseTwo != null) {
             try 
             {
-                //finalAutoCommand.addCommands(phaseTwo);
+                finalAutoCommand.addCommands(phaseTwo);
             }
             catch(Exception e)
             {

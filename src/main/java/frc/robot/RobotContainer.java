@@ -42,6 +42,14 @@ import frc.robot.constants.BasicConstants.Misc;
 
 public class RobotContainer {
 
+    //smart dashboard 
+ 
+    private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+
+    //smart dashboard components
+    SendableChooser<Command> m_secondPhaseChooser;
+    SendableChooser<Command> m_firstPhaseChooser;
+
     // The driver's controller
     CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.DRIVE_REMOTE_PORT);
     CommandXboxController m_mechanismController = new CommandXboxController(ControllerConstants.MECHANISM_REMOTE_PORT);
@@ -53,12 +61,12 @@ public class RobotContainer {
 
     
 
-    //smart dashboard components
-    SendableChooser<Command> m_secondPhaseChooser;
-    SendableChooser<Command> m_firstPhaseChooser;
+
 
     //autonomous commands
     Command m_driveToGridCommand;
+    SequentialCommandGroup shootingCommand;
+    Command Nothing;
  
     AnalogInput analog;
 
@@ -170,6 +178,17 @@ public class RobotContainer {
         Field2d m_field = new Field2d();
         SmartDashboard.putData("Field", m_field);
         m_field.getObject("traj").setTrajectory(AutoTrajectoryConstants.kDriveToGridTrajectory);
+
+
+        shootingCommand = new SequentialCommandGroup(
+        Commands.runOnce(() -> m_robotShooting.toggleShootingSpeaker()), 
+        Commands.waitSeconds(1), 
+        Commands.runOnce(() -> m_robotShooting.toggleMidtake()), 
+        Commands.waitSeconds(1), 
+        Commands.runOnce(() -> m_robotShooting.toggleShootingSpeaker()), 
+        Commands.runOnce(() -> m_robotShooting.toggleMidtake())
+        );
+        
         
     }
 
@@ -177,6 +196,13 @@ public class RobotContainer {
      * Sets up choosers and provides them to the SmartDashboard
      */
     private void configureSmartDashboard() {
+
+
+        m_chooser.setDefaultOption("Shooting", shootingCommand);
+        m_chooser.addOption("Moving", m_driveToGridCommand);
+        m_chooser.addOption("N/A", null);
+        SmartDashboard.putData("Auto choices", m_chooser);
+        
     
         //Set options for choosing various flavors of autonomous
 
@@ -208,6 +234,8 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
+
+        
         
         //Get final composite command
         //Command finalCommandGroup = getFinalAutoCommand();
@@ -228,20 +256,12 @@ public class RobotContainer {
         SequentialCommandGroup finalAutoCommand = new SequentialCommandGroup();
 
         
-        SequentialCommandGroup phaseOne = new SequentialCommandGroup(
-        Commands.runOnce(() -> m_robotShooting.toggleShootingSpeaker()), 
-        Commands.waitSeconds(1), 
-        Commands.runOnce(() -> m_robotShooting.toggleMidtake()), 
-        Commands.waitSeconds(1), 
-        Commands.runOnce(() -> m_robotShooting.toggleShootingSpeaker()), 
-        Commands.runOnce(() -> m_robotShooting.toggleMidtake())
-        );
-        
-
       
 
-        Command phaseTwo = m_driveToGridCommand;
-
+      
+        return m_chooser.getSelected();
+    //    Command phaseTwo = m_driveToGridCommand;
+/* 
         if (phaseOne != null) {
             try 
             {
@@ -263,6 +283,8 @@ public class RobotContainer {
                 //System.out.println(e.getMessage());
             }
         }
+*/
+
 
 
 
@@ -285,7 +307,7 @@ public class RobotContainer {
 
 
       //  finalAutoCommand.addCommands(m_doNothingCommand);
-        return finalAutoCommand;
+ 
     }
 
     /*

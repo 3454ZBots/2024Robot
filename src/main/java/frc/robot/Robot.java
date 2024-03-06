@@ -1,22 +1,11 @@
 package frc.robot;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.BasicConstants.ControllerConstants;
-import frc.robot.subsystems.DriveSubsystem;
-//import frc.robot.subsystems.pixy.I2CLink;
-//import frc.robot.subsystems.pixy.PixyCamera;
-import frc.robot.constants.BasicConstants.ArmConstants;
+
 
 public class Robot extends TimedRobot {
 
@@ -24,6 +13,8 @@ public class Robot extends TimedRobot {
 
     private Command m_autonomousCommand;
     private RobotContainer m_robotContainer;
+
+
    // private CameraServer cameraServer;
   //  private PixyCamera pixy;
 
@@ -53,7 +44,8 @@ public class Robot extends TimedRobot {
 
      //   mechanismController = new XboxController(1);
 
-  
+             // Start of the sendablechooser code - - - - - - - - - -
+
     }
 
     /*

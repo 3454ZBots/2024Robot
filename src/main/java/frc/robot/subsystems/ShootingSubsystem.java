@@ -69,8 +69,8 @@ public class ShootingSubsystem extends SubsystemBase {
             ShootingControllerRight.set(0);
             ShootingControllerLeft.set(0);
         } else {
-            ShootingControllerRight.set(0.15);
-            ShootingControllerLeft.set(-0.15); //normally * -1
+            ShootingControllerRight.set(MechanismConstants.SHOOTING_SPEED_AMP);
+            ShootingControllerLeft.set(MechanismConstants.SHOOTING_SPEED_AMP * -1); //normally * -1
         }
     }
 

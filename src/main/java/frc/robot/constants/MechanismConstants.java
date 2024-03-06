@@ -9,7 +9,7 @@ public final class MechanismConstants
     public static final int SHOOTING_LEFT_CAN_ID = 14;
     public static final double INTAKE_SPEED = -1;
     public static final double MIDTAKE_SPEED = 1;
-    public static final double SHOOTING_SPEED_AMP = 0.39;
+    public static final double SHOOTING_SPEED_AMP = 0.2;
     public static final double SHOOTING_SPEED_SPEAKER = 1;
     public static final int LEFT_CLIMBER_PORT = 0;
     public static final int RIGHT_CLIMBER_PORT = 1;

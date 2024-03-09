@@ -65,7 +65,7 @@ public class RobotContainer {
 
     //autonomous commands
     Command m_driveToGridCommand;
-    SequentialCommandGroup shootingCommand;
+    SequentialCommandGroup shootingCommand, driveStop;
     Command Nothing;
  
     AnalogInput analog;
@@ -188,6 +188,8 @@ public class RobotContainer {
         Commands.runOnce(() -> m_robotShooting.toggleShootingSpeaker()), 
         Commands.runOnce(() -> m_robotShooting.toggleMidtake())
         );
+
+        driveStop = new SequentialCommandGroup(m_driveToGridCommand, Commands.runOnce(() -> m_robotDrive.drive(0, 0, 0, false)));
         
         
     }
@@ -199,7 +201,7 @@ public class RobotContainer {
 
 
         m_chooser.setDefaultOption("Shooting", shootingCommand);
-        m_chooser.addOption("Moving", m_driveToGridCommand);
+        m_chooser.addOption("Moving", driveStop);
         m_chooser.addOption("N/A", null);
         SmartDashboard.putData("Auto choices", m_chooser);
         

@@ -42,7 +42,7 @@ public final class SwerveConstants
         public static final double kTurningEncoderPositionPIDMinInput = 0; // radians
         public static final double kTurningEncoderPositionPIDMaxInput = kTurningEncoderPositionFactor; // radians
 
-        public static final double kDrivingP = 0.0006;
+        public static final double kDrivingP = 0.00089;
         public static final double kDrivingI = 0;
         public static final double kDrivingD = 0;
         public static final double kDrivingFF = (0.00003 / kDriveWheelFreeSpeedRps);

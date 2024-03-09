@@ -14,6 +14,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -70,8 +72,9 @@ public class DriveSubsystem extends SubsystemBase {
         m_PoseEstimator = new SwerveDrivePoseEstimator(SwerveDriveConstants.kDriveKinematics, Rotation2d.fromDegrees(m_gyro.getAngle() * -1), getModulePositions(), getPose());
         
         SmartDashboard.putData("field pose", m_field);
+        
     }
-
+    
      
     @Override
     public void periodic() 
@@ -105,7 +108,11 @@ public class DriveSubsystem extends SubsystemBase {
 
         publisher.set(states);
 
-    
+        SmartDashboard.putNumber("FL Speed", m_frontLeft.getState().speedMetersPerSecond);
+        SmartDashboard.putNumber("FR Speed", m_frontRight.getState().speedMetersPerSecond);
+        SmartDashboard.putNumber("RL Speed", m_rearLeft.getState().speedMetersPerSecond);
+        SmartDashboard.putNumber("RR Speed", m_rearRight.getState().speedMetersPerSecond);
+        
     }
 
     @Override
@@ -197,7 +204,7 @@ public class DriveSubsystem extends SubsystemBase {
         }
         
 
-        xSpeed *= SwerveDriveConstants.kMaxSpeedMetersPerSecond;
+        xSpeed = 0.5; //*= SwerveDriveConstants.kMaxSpeedMetersPerSecond;
         ySpeed *= SwerveDriveConstants.kMaxSpeedMetersPerSecond;
         rot *= SwerveDriveConstants.kMaxAngularSpeed;
 

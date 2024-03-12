@@ -21,6 +21,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.Publisher;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -59,6 +60,7 @@ public class DriveSubsystem extends SubsystemBase {
     // The gyro sensor
     private Pigeon2 m_gyro = new Pigeon2(SwerveDriveConstants.PIGEON_ID);
     private Field2d m_field = new Field2d();
+    private Field2d fakefield = new Field2d();
 
 
     boolean isFieldOriented = true;
@@ -69,21 +71,24 @@ public class DriveSubsystem extends SubsystemBase {
     Matrix<N3,N1> visionDeviations = VecBuilder.fill(0.9, 0.9, 0.9);
 
     StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
-
-    // Odometry class for tracking robot pose
-    SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
-        SwerveDriveConstants.kDriveKinematics,
-        getHeading(),
-        getModulePositions());
+    
+    SwerveDriveOdometry m_odometry;
 
         SwerveDrivePoseEstimator m_PoseEstimator;
     /** Creates a new DriveSubsystem. */
     public DriveSubsystem() {
         m_gyro.setYaw(0);
-        m_PoseEstimator = new SwerveDrivePoseEstimator(SwerveDriveConstants.kDriveKinematics, Rotation2d.fromDegrees(m_gyro.getAngle() * -1), getModulePositions(), getPose(), poseDeviations, visionDeviations);
+
+        m_odometry = new SwerveDriveOdometry(
+        SwerveDriveConstants.kDriveKinematics,
+        getHeading(),
+        getModulePositions());
+
+
+        m_PoseEstimator = new SwerveDrivePoseEstimator(SwerveDriveConstants.kDriveKinematics, m_gyro.getRotation2d(), getModulePositions(), getPose(), poseDeviations, visionDeviations);
         
         SmartDashboard.putData("field pose", m_field);
-        
+        SmartDashboard.putData("Rotation 2D Pose", fakefield);
     }
     
      
@@ -99,7 +104,7 @@ public class DriveSubsystem extends SubsystemBase {
                 m_rearLeft.getPosition(),
                 m_rearRight.getPosition()
             });
-            m_PoseEstimator.update(Rotation2d.fromDegrees(m_gyro.getAngle() * -1), getModulePositions());
+            m_PoseEstimator.update(m_gyro.getRotation2d(), getModulePositions());
             m_field.setRobotPose(m_PoseEstimator.getEstimatedPosition());
 
 
@@ -123,7 +128,9 @@ public class DriveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("FR Speed", m_frontRight.getState().speedMetersPerSecond);
         SmartDashboard.putNumber("RL Speed", m_rearLeft.getState().speedMetersPerSecond);
         SmartDashboard.putNumber("RR Speed", m_rearRight.getState().speedMetersPerSecond);
+
         
+        fakefield.setRobotPose(new Pose2d(0, 0, m_gyro.getRotation2d()));
     }
 
     @Override

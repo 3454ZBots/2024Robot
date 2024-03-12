@@ -201,7 +201,7 @@ public class RobotContainer {
 
 
         m_chooser.setDefaultOption("Shooting", shootingCommand);
-        m_chooser.addOption("Moving", driveStop);
+        m_chooser.addOption("Moving", m_driveToGridCommand);
         m_chooser.addOption("N/A", null);
         SmartDashboard.putData("Auto choices", m_chooser);
         

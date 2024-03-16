@@ -1,6 +1,5 @@
 package frc.robot.constants;
 
-import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -69,7 +68,12 @@ public final class SwerveConstants
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
         public static final double kMaxSpeedMetersPerSecond = 4.2; //Used to be 40
-        public static final double kMaxAngularSpeed = 2 * Math.PI; //Used to be 12 * PI
+        public static final double kMaxAngularSpeed = 1.5 * Math.PI; //Used to be 12 * PI
+
+        //Slew code, makes robot move more smoothly
+        //public static final double kDirectionSlewRate = 1.2; // radians per second
+        //public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%)
+        //public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
 
         // Chassis configuration
         public static final double kTrackWidth = Units.inchesToMeters(26.6);

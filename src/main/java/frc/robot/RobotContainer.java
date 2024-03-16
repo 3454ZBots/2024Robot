@@ -64,8 +64,8 @@ public class RobotContainer {
 
 
     //autonomous commands
-    Command m_driveToGridCommand;
-    SequentialCommandGroup shootingCommand, driveStop;
+    Command m_driveToGridCommand, centerOutCommand, centerBackCommand;
+    SequentialCommandGroup shootingCommand, driveStop; //johnAuto;
     Command Nothing;
  
     AnalogInput analog;
@@ -126,25 +126,29 @@ public class RobotContainer {
         m_mechanismController.y().toggleOnTrue(Commands.runOnce(() -> m_robotShooting.toggleMidtake()));
         m_mechanismController.povCenter().negate().onTrue(Commands.runOnce(() -> m_robotShooting.spit()));
         m_mechanismController.povCenter().onTrue(Commands.runOnce(() -> m_robotShooting.stopSpit()));
-       // m_driverController.povUp().onTrue(Commands.runOnce(() -> m_robotClimbing.reachUp()));
-       // m_driverController.povDown().onTrue(Commands.runOnce(() -> m_robotClimbing.pullDown()));
-       // m_driverController.povCenter().onTrue(Commands.runOnce(() -> m_robotClimbing.turnOffMotors()));
 
 
-       //Climbing Commands
-        m_mechanismController.rightBumper().onTrue(Commands.runOnce(() -> m_robotClimbing.RightUp()));
-        m_mechanismController.leftBumper().onTrue(Commands.runOnce(() -> m_robotClimbing.leftUp()));
-        m_mechanismController.rightTrigger().onTrue(Commands.runOnce(() -> m_robotClimbing.RightDown()));
-        m_mechanismController.leftTrigger().onTrue(Commands.runOnce(() -> m_robotClimbing.leftDown()));
-        m_mechanismController.leftBumper().negate().and(m_mechanismController.leftTrigger().negate()).onTrue(Commands.runOnce(() -> m_robotClimbing.leftOff()));
-        m_mechanismController.rightBumper().negate().and(m_mechanismController.rightTrigger().negate()).onTrue(Commands.runOnce(() -> m_robotClimbing.rightOff()));
 
-        m_driverController.a().onTrue(Commands.runOnce(() -> m_robotDrive.driveDistance(1)));
+        
+        m_mechanismController.rightBumper().onTrue(Commands.runOnce(() -> m_robotShooting.extendAmp()));
+        m_mechanismController.leftBumper().onTrue(Commands.runOnce(() -> m_robotShooting.retractAmp()));
+
+        //Climbing Commands
+        m_mechanismController.rightTrigger().onTrue(Commands.runOnce(() -> m_robotClimbing.climbRight()));
+        m_mechanismController.leftTrigger().onTrue(Commands.runOnce(() -> m_robotClimbing.climbLeft()));
+        m_mechanismController.rightTrigger().onFalse(Commands.runOnce(() -> m_robotClimbing.stopRight()));
+        m_mechanismController.leftTrigger().onFalse(Commands.runOnce(() -> m_robotClimbing.stopLeft()));
+
+        m_mechanismController.leftStick().toggleOnTrue(Commands.runOnce(() -> m_robotClimbing.toggleClimbing()));
+
+       
 
 
      //   m_driverController.x().onTrue(Commands.runOnce(() -> m_robotVision.beginOrienting()));
      //   m_driverController.a().onTrue(Commands.runOnce(() -> m_robotVision.stopOrienting()));
       //  m_driverController.y().onTrue(Commands.runOnce(() -> m_robotDrive.setX()));
+
+
     }
 
     /*
@@ -172,9 +176,33 @@ public class RobotContainer {
             thetaController,
             m_robotDrive::setModuleStates,
             m_robotDrive);
-       
 
+        /*    
+        centerOutCommand = new SwerveControllerCommand(
+            AutoTrajectoryConstants.kCenterOut,
+            m_robotDrive::getPose, // Functional interface to feed supplier
+            SwerveDriveConstants.kDriveKinematics,
 
+            // Position controllers
+            new PIDController(AutoDriveConstants.kPXController, 0, 0),
+            new PIDController(AutoDriveConstants.kPYController, 0, 0),
+            thetaController,
+            m_robotDrive::setModuleStates,
+            m_robotDrive);
+
+        centerBackCommand = new SwerveControllerCommand(
+            AutoTrajectoryConstants.kCenterBack,
+            m_robotDrive::getPose, // Functional interface to feed supplier
+            SwerveDriveConstants.kDriveKinematics,
+
+            // Position controllers
+            new PIDController(AutoDriveConstants.kPXController, 0, 0),
+            new PIDController(AutoDriveConstants.kPYController, 0, 0),
+            thetaController,
+            m_robotDrive::setModuleStates,
+            m_robotDrive);
+
+*/
         Field2d m_field = new Field2d();
         SmartDashboard.putData("Field", m_field);
         m_field.getObject("traj").setTrajectory(AutoTrajectoryConstants.kDriveToGridTrajectory);
@@ -189,8 +217,22 @@ public class RobotContainer {
         Commands.runOnce(() -> m_robotShooting.toggleMidtake())
         );
 
-        driveStop = new SequentialCommandGroup(m_driveToGridCommand, Commands.runOnce(() -> m_robotDrive.drive(0, 0, 0, false)));
         
+        
+        /*
+        
+        johnAuto = new SequentialCommandGroup(
+        shootingCommand,
+        Commands.waitSeconds(1),
+        Commands.runOnce(() -> m_robotShooting.toggleMidtakeAndIntake()),
+        Commands.waitSeconds(1), 
+        centerOutCommand,
+        Commands.waitSeconds(1),
+        centerBackCommand,
+        Commands.waitSeconds(1),
+        shootingCommand
+        );
+        */
         
     }
 
@@ -203,6 +245,7 @@ public class RobotContainer {
         m_chooser.setDefaultOption("Shooting", shootingCommand);
         m_chooser.addOption("Moving", m_driveToGridCommand);
         m_chooser.addOption("N/A", null);
+      //  m_chooser.addOption("johnAuto", johnAuto);
         SmartDashboard.putData("Auto choices", m_chooser);
         
     

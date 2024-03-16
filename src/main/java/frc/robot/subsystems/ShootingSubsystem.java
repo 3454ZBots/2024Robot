@@ -1,11 +1,17 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
@@ -18,13 +24,16 @@ public class ShootingSubsystem extends SubsystemBase {
     CANSparkMax IntakeController = new CANSparkMax(MechanismConstants.INTAKE_CAN_ID, MotorType.kBrushed);
     CANSparkMax ShootingControllerLeft = new CANSparkMax(MechanismConstants.SHOOTING_LEFT_CAN_ID, MotorType.kBrushless);
     CANSparkMax MidtakeController = new CANSparkMax(MechanismConstants.MIDTAKE_CAN_ID, MotorType.kBrushless);
-
+    DoubleSolenoid AmpSolenoid = new DoubleSolenoid(MechanismConstants.PNEUMATIC_HUB_ID, PneumaticsModuleType.REVPH, 1, 0);
+    Compressor compressor = new Compressor(MechanismConstants.PNEUMATIC_HUB_ID, PneumaticsModuleType.REVPH);
+    
     boolean IntakeOn = false;
     boolean wasReleased = true;
     boolean shootingOn = false;
     CommandXboxController rumbleController;
     int rumbleCounter = 0;
 
+    //CLOCKWISE TO INCREASE DISTANCE
     DigitalInput opticalSensor = new DigitalInput(MechanismConstants.SENSOR_DIO_PORT);
 
     public ShootingSubsystem(CommandXboxController Controller)
@@ -34,13 +43,13 @@ public class ShootingSubsystem extends SubsystemBase {
 
     public void shootingPeriodic() {
  
+        //CLOCKWISE TO INCREASE DISTANCE
         if(opticalSensor.get() == false && IntakeController.get() == MechanismConstants.INTAKE_SPEED) { // was tripped
             IntakeController.set(0);
             MidtakeController.set(0);
-            rumbleController.getHID().setRumble(RumbleType.kBothRumble, 1);
+            //rumbleController.getHID().setRumble(RumbleType.kBothRumble, 1);
             rumbleCounter = 1;
         }
-
 
         if(rumbleCounter == 75)
         {
@@ -52,6 +61,11 @@ public class ShootingSubsystem extends SubsystemBase {
             rumbleCounter += 1;
         }
         
+        if (shootingOn) {
+            compressor.disable();
+        } else {
+            compressor.enableDigital();
+        }
     
         double shootSpeed = ShootingControllerRight.get();
         SmartDashboard.putBoolean("shooting on", shootSpeed != 0);
@@ -100,7 +114,6 @@ public class ShootingSubsystem extends SubsystemBase {
             IntakeController.set(MechanismConstants.INTAKE_SPEED);
             MidtakeController.set(MechanismConstants.MIDTAKE_SPEED);
         }
-
     }
 
     public void spit()
@@ -116,6 +129,16 @@ public class ShootingSubsystem extends SubsystemBase {
         }
     }
 
+
+    public void extendAmp()
+    {
+        AmpSolenoid.set(Value.kForward);
+    }
+
+    public void retractAmp()
+    {
+        AmpSolenoid.set(Value.kReverse);
+    }
     
 }
 

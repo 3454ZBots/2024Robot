@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.MechanismConstants;
 
@@ -8,9 +9,13 @@ public class ClimbSubsystem extends SubsystemBase
 {   
     Spark leftClimber = new Spark(MechanismConstants.LEFT_CLIMBER_PORT);
     Spark rightClimber = new Spark(MechanismConstants.RIGHT_CLIMBER_PORT);
+    double CLIMB_SPEED = 0.5;
+  
+
 
     public ClimbSubsystem() { 
         turnOffMotors();
+        SmartDashboard.putNumber("Cimb Speed", CLIMB_SPEED);
     }
     
     public void turnOffMotors() {
@@ -18,16 +23,37 @@ public class ClimbSubsystem extends SubsystemBase
         rightClimber.set(0);
     }
 
-    public void pullDown(){
-        leftClimber.set(MechanismConstants.DOWN_CLIMB_SPEED);
-        rightClimber.set(MechanismConstants.DOWN_CLIMB_SPEED);
+  
+
+    public void climbLeft()
+    {
+        leftClimber.set(-CLIMB_SPEED);
     }
 
-    public void reachUp() {
-        leftClimber.set(MechanismConstants.UP_CLIMB_SPEED);
-        rightClimber.set(MechanismConstants.UP_CLIMB_SPEED);
+    public void stopLeft()
+    {
+        leftClimber.set(0);
+    }
+    
+
+    public void climbRight()
+    {
+        rightClimber.set(CLIMB_SPEED);
     }
 
+    public void stopRight()
+    {
+        rightClimber.set(0);
+    }
+
+    public void toggleClimbing()
+    {
+        CLIMB_SPEED = CLIMB_SPEED * -1;
+     
+      
+        SmartDashboard.putNumber("Cimb Speed", CLIMB_SPEED);
+    }
+    /*
     public void leftDown()
     {
         leftClimber.set(MechanismConstants.DOWN_CLIMB_SPEED);
@@ -57,5 +83,7 @@ public class ClimbSubsystem extends SubsystemBase
     {
         rightClimber.set(0);
     }
+
+    */
 
 }

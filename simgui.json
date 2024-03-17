@@ -2,10 +2,28 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Auto choices": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Moving: ": "String Chooser",
+      "/SmartDashboard/Rotation 2D Pose": "Field2d",
       "/SmartDashboard/Scoring: ": "String Chooser",
       "/SmartDashboard/field pose": "Field2d"
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "Shuffleboard": {
+        "open": true
+      },
+      "SmartDashboard": {
+        "Auto choices": {
+          "open": true,
+          "string[]##v_/SmartDashboard/Auto choices/options": {
+            "open": true
+          }
+        },
+        "open": true
+      }
     }
   },
   "NetworkTables Info": {

@@ -173,12 +173,14 @@ public class SwerveModule {
         //SmartDashboard.putNumber("desired speed (RPMs) for Spark " + m_drivingSparkMax.getDeviceId(), optimizedDesiredState.speedMetersPerSecond);
 
         m_desiredState = desiredState;
+
     }
 
 
     /** Zeroes all the SwerveModule encoders. */
     public void resetEncoders() {
         m_drivingEncoder.setPosition(0);
+        //m_drivingEncoder.getVelocity()
     }
 
     public void encoderDrive(double dist)

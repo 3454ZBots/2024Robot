@@ -13,6 +13,8 @@ import frc.robot.subsystems.VisionSubsystem;
 
 import java.util.List;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -67,7 +69,7 @@ public class RobotContainer {
     Command m_driveToGridCommand, centerOutCommand, centerBackCommand;
     SequentialCommandGroup shootingCommand, driveStop; //johnAuto;
     Command Nothing;
- 
+
     AnalogInput analog;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -245,7 +247,13 @@ public class RobotContainer {
         m_chooser.setDefaultOption("Shooting", shootingCommand);
         m_chooser.addOption("Moving", m_driveToGridCommand);
         m_chooser.addOption("N/A", null);
+
       //  m_chooser.addOption("johnAuto", johnAuto);
+
+	// PathPlanner autos
+        m_chooser.addOption("test1Auto", getAutonomousCommand_PP());
+        m_chooser.addOption("test2Auto", getAutonomousCommand_PP2());
+
         SmartDashboard.putData("Auto choices", m_chooser);
         
     
@@ -305,6 +313,7 @@ public class RobotContainer {
 
       
         return m_chooser.getSelected();
+        
     //    Command phaseTwo = m_driveToGridCommand;
 /* 
         if (phaseOne != null) {
@@ -354,7 +363,12 @@ public class RobotContainer {
       //  finalAutoCommand.addCommands(m_doNothingCommand);
  
     }
-
+    public Command getAutonomousCommand_PP() {
+         return new PathPlannerAuto("test1Auto");
+    }
+    public Command getAutonomousCommand_PP2() {
+         return new PathPlannerAuto("test2Auto");
+    }
     /*
      * Using the input provided by the drive team on the SmartDashboard, compiles the final
      * commands to run during autonomous.

@@ -253,6 +253,7 @@ public class RobotContainer {
 	// PathPlanner autos
         m_chooser.addOption("test1Auto", getAutonomousCommand_PP());
         m_chooser.addOption("test2Auto", getAutonomousCommand_PP2());
+        m_chooser.addOption("new auto", getAutonomousCommand_newauto());
 
         SmartDashboard.putData("Auto choices", m_chooser);
         
@@ -368,6 +369,9 @@ public class RobotContainer {
     }
     public Command getAutonomousCommand_PP2() {
          return new PathPlannerAuto("test2Auto");
+    }
+    public Command getAutonomousCommand_newauto() {
+         return new PathPlannerAuto("New New Auto");
     }
     /*
      * Using the input provided by the drive team on the SmartDashboard, compiles the final

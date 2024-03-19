@@ -13,6 +13,7 @@ import frc.robot.subsystems.VisionSubsystem;
 
 import java.util.List;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -47,6 +48,7 @@ public class RobotContainer {
     //smart dashboard 
  
     private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+    private final SendableChooser<Command> Anglechooser = new SendableChooser<>();
 
     //smart dashboard components
     SendableChooser<Command> m_secondPhaseChooser;
@@ -67,7 +69,7 @@ public class RobotContainer {
 
     //autonomous commands
     Command m_driveToGridCommand, centerOutCommand, centerBackCommand;
-    SequentialCommandGroup shootingCommand, driveStop; //johnAuto;
+    SequentialCommandGroup shootingCommand, driveStop, FirstShootingCommand, LastShootingCommand; //johnAuto;
     Command Nothing;
 
     AnalogInput analog;
@@ -210,17 +212,40 @@ public class RobotContainer {
         m_field.getObject("traj").setTrajectory(AutoTrajectoryConstants.kDriveToGridTrajectory);
 
 
-        shootingCommand = new SequentialCommandGroup(
+        /*shootingCommand = new SequentialCommandGroup(
         Commands.runOnce(() -> m_robotShooting.toggleShootingSpeaker()), 
-        Commands.waitSeconds(1), 
+        Commands.waitSeconds(.75), 
         Commands.runOnce(() -> m_robotShooting.toggleMidtake()), 
-        Commands.waitSeconds(1), 
+        Commands.waitSeconds(.5), 
+        Commands.runOnce(() -> m_robotShooting.toggleShootingSpeaker()), 
+        Commands.runOnce(() -> m_robotShooting.toggleMidtake())
+        );
+        */
+        shootingCommand = new SequentialCommandGroup( 
+        Commands.runOnce(() -> m_robotShooting.toggleMidtake()), 
+        Commands.waitSeconds(.5), 
+        Commands.runOnce(() -> m_robotShooting.toggleMidtake())
+        );
+        LastShootingCommand = new SequentialCommandGroup(
+        Commands.runOnce(() -> m_robotShooting.toggleMidtake()), 
+        Commands.waitSeconds(.5), 
         Commands.runOnce(() -> m_robotShooting.toggleShootingSpeaker()), 
         Commands.runOnce(() -> m_robotShooting.toggleMidtake())
         );
 
+        FirstShootingCommand = new SequentialCommandGroup(
+        Commands.runOnce(() -> m_robotShooting.toggleShootingSpeaker()), 
+        Commands.waitSeconds(.75), 
+        Commands.runOnce(() -> m_robotShooting.toggleMidtake()), 
+        Commands.waitSeconds(.5),  
+        Commands.runOnce(() -> m_robotShooting.toggleMidtake())
+        );
         
-        
+        NamedCommands.registerCommand("Shoot", shootingCommand);
+        NamedCommands.registerCommand("FirstShoot", FirstShootingCommand);
+        NamedCommands.registerCommand("LastShoot", LastShootingCommand);
+        NamedCommands.registerCommand("Intake", Commands.runOnce(() -> m_robotShooting.toggleMidtakeAndIntake()));
+
         /*
         
         johnAuto = new SequentialCommandGroup(
@@ -248,12 +273,15 @@ public class RobotContainer {
         m_chooser.addOption("Moving", m_driveToGridCommand);
         m_chooser.addOption("N/A", null);
 
+        Anglechooser.setDefaultOption("Zero", Commands.runOnce(() -> m_robotDrive.startAngle((0))));
+        Anglechooser.addOption("60", Commands.runOnce(() -> m_robotDrive.startAngle(60)));
+        Anglechooser.addOption("-60", Commands.runOnce(() -> m_robotDrive.startAngle(-60)));
       //  m_chooser.addOption("johnAuto", johnAuto);
 
 	// PathPlanner autos
         m_chooser.addOption("test1Auto", getAutonomousCommand_PP());
         m_chooser.addOption("test2Auto", getAutonomousCommand_PP2());
-        m_chooser.addOption("new auto", getAutonomousCommand_newauto());
+        m_chooser.addOption("CenterNotePickup", getAutonomousCommand_CenterNotePickup());
 
         SmartDashboard.putData("Auto choices", m_chooser);
         
@@ -370,8 +398,8 @@ public class RobotContainer {
     public Command getAutonomousCommand_PP2() {
          return new PathPlannerAuto("test2Auto");
     }
-    public Command getAutonomousCommand_newauto() {
-         return new PathPlannerAuto("New New Auto");
+    public Command getAutonomousCommand_CenterNotePickup() {
+         return new PathPlannerAuto("LCenterNotePickup");
     }
     /*
      * Using the input provided by the drive team on the SmartDashboard, compiles the final

@@ -282,7 +282,9 @@ public class RobotContainer {
         m_chooser.addOption("test1Auto", getAutonomousCommand_PP());
         m_chooser.addOption("test2Auto", getAutonomousCommand_PP2());
         m_chooser.addOption("CenterNotePickup", getAutonomousCommand_CenterNotePickup());
-
+        m_chooser.addOption("4NotePickup", getAutonomousCommand_4NotePickup());
+        m_chooser.addOption("RotateTest", getAutonomousCommand_RotateTest());
+        m_chooser.addOption("CenterTest", getAutonomousCommand_CenterNoteTest());
         SmartDashboard.putData("Auto choices", m_chooser);
         
     
@@ -400,6 +402,15 @@ public class RobotContainer {
     }
     public Command getAutonomousCommand_CenterNotePickup() {
          return new PathPlannerAuto("LCenterNotePickup");
+    }
+    public Command getAutonomousCommand_4NotePickup() {
+         return new PathPlannerAuto("4NoteAuto");
+    }
+    public Command getAutonomousCommand_RotateTest() {
+         return new PathPlannerAuto("RotateTest");
+    }
+    public Command getAutonomousCommand_CenterNoteTest() {
+         return new PathPlannerAuto("CenterNotePickup");
     }
     /*
      * Using the input provided by the drive team on the SmartDashboard, compiles the final

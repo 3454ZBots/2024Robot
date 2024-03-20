@@ -61,7 +61,7 @@ public class ShootingSubsystem extends SubsystemBase {
             rumbleCounter += 1;
         }
         
-        if (shootingOn) {
+        if (ShootingControllerRight.get() != 0) {
             compressor.disable();
         } else {
             compressor.enableDigital();
